@@ -1,0 +1,340 @@
+{
+  "meta": {
+    "generated": "2026-07-08",
+    "note": "Bu dosya finansal_dashboard.html tarafından okunur. 'snapshot' alanını elle güncelleyip GitHub'a push'layarak tüm cihazlarda güncel veriyi görebilirsiniz."
+  },
+  "snapshot": {
+    "income": 140000,
+    "fixedCost": 85000,
+    "goldGrams": 60,
+    "goldPrice": 6200,
+    "debts": [
+      {
+        "bank": "Yapı Kredi",
+        "debt": 233961,
+        "limit": 750000
+      },
+      {
+        "bank": "Akbank",
+        "debt": 24987,
+        "limit": 52000
+      },
+      {
+        "bank": "TOM Bank",
+        "debt": 22789,
+        "limit": 100000
+      },
+      {
+        "bank": "Garanti BBVA",
+        "debt": 20325,
+        "limit": 250000
+      },
+      {
+        "bank": "Türkiye İş Bankası",
+        "debt": 19833,
+        "limit": 387760
+      },
+      {
+        "bank": "QNB",
+        "debt": 3058,
+        "limit": 25000
+      },
+      {
+        "bank": "Enpara",
+        "debt": 1061,
+        "limit": 40000
+      },
+      {
+        "bank": "VakıfBank",
+        "debt": 0,
+        "limit": 85000
+      }
+    ],
+    "faizliDebt": 50000,
+    "family": [
+      {
+        "name": "Anne",
+        "amount": 40000
+      },
+      {
+        "name": "Abi",
+        "amount": 26000
+      }
+    ],
+    "roadmapChecks": [
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "history": {
+    "monthly_expense_history": [
+      {
+        "month": "May 2025",
+        "expense": 90567.04
+      },
+      {
+        "month": "June 2025",
+        "expense": 112246.52
+      },
+      {
+        "month": "July 2025",
+        "expense": 86389.67
+      },
+      {
+        "month": "August 2025",
+        "expense": 158048.31
+      },
+      {
+        "month": "September 2025",
+        "expense": 147592.98
+      },
+      {
+        "month": "October 2025",
+        "expense": 184886.94
+      },
+      {
+        "month": "November 2025",
+        "expense": 142360.63
+      },
+      {
+        "month": "December 2025",
+        "expense": 128728.58
+      },
+      {
+        "month": "January 2026",
+        "expense": 156114.05
+      },
+      {
+        "month": "February 2026",
+        "expense": 164543.78
+      },
+      {
+        "month": "March 2026",
+        "expense": 152201.24
+      },
+      {
+        "month": "April 2026",
+        "expense": 193028.85
+      },
+      {
+        "month": "May 2026",
+        "expense": 156014.24
+      },
+      {
+        "month": "June 2026",
+        "expense": 245262.32
+      },
+      {
+        "month": "July 2026",
+        "expense": 51296.43
+      },
+      {
+        "month": "August 2026",
+        "expense": 51435.13
+      },
+      {
+        "month": "September 2026",
+        "expense": 45803.71
+      },
+      {
+        "month": "October 2026",
+        "expense": 45803.71
+      },
+      {
+        "month": "November 2026",
+        "expense": 16426.21
+      },
+      {
+        "month": "December 2026",
+        "expense": 7899.08
+      },
+      {
+        "month": "January 2027",
+        "expense": 3224.48
+      },
+      {
+        "month": "February 2027",
+        "expense": 3224.48
+      }
+    ],
+    "recent_category_breakdown": [
+      {
+        "group": "Health",
+        "amount": 160517.11
+      },
+      {
+        "group": "Market",
+        "amount": 93078.92
+      },
+      {
+        "group": "Utility Bill",
+        "amount": 45982.1
+      },
+      {
+        "group": "Debt Payment",
+        "amount": 40516.68
+      },
+      {
+        "group": "Dinner",
+        "amount": 31865.0
+      },
+      {
+        "group": "Furniture",
+        "amount": 29888.98
+      },
+      {
+        "group": "Gas & Car",
+        "amount": 29040.95
+      },
+      {
+        "group": "Clothes",
+        "amount": 28821.37
+      },
+      {
+        "group": "Online Commerce",
+        "amount": 19954.83
+      },
+      {
+        "group": "Apps",
+        "amount": 17753.65
+      },
+      {
+        "group": "Travel",
+        "amount": 16718.0
+      },
+      {
+        "group": "Entertainment",
+        "amount": 14333.35
+      },
+      {
+        "group": "Accessories",
+        "amount": 14179.15
+      },
+      {
+        "group": "Butcher",
+        "amount": 13184.0
+      },
+      {
+        "group": "Family Member",
+        "amount": 11871.22
+      },
+      {
+        "group": "Domain Names",
+        "amount": 10418.62
+      },
+      {
+        "group": "Balkan Tatili",
+        "amount": 10291.58
+      },
+      {
+        "group": "Cash",
+        "amount": 3000.0
+      },
+      {
+        "group": "Education",
+        "amount": 1756.7
+      },
+      {
+        "group": "Software",
+        "amount": 683.2
+      },
+      {
+        "group": "Insurance",
+        "amount": 450.0
+      }
+    ],
+    "bank_expense_totals": [
+      {
+        "bank": "Yapı Kredi",
+        "amount": 1310450.51
+      },
+      {
+        "bank": "Garanti",
+        "amount": 331031.18
+      },
+      {
+        "bank": "Akbank",
+        "amount": 292936.19
+      },
+      {
+        "bank": "TOM Bank",
+        "amount": 221132.95
+      },
+      {
+        "bank": "Enpara",
+        "amount": 104535.29
+      },
+      {
+        "bank": "QNB",
+        "amount": 54451.9
+      },
+      {
+        "bank": "İş Bankası",
+        "amount": 25060.36
+      },
+      {
+        "bank": "Cash",
+        "amount": 3500.0
+      }
+    ],
+    "upcoming_committed_expense": [
+      {
+        "month": "July 2026",
+        "amount": 51296.43
+      },
+      {
+        "month": "August 2026",
+        "amount": 51435.13
+      },
+      {
+        "month": "September 2026",
+        "amount": 45803.71
+      },
+      {
+        "month": "October 2026",
+        "amount": 45803.71
+      },
+      {
+        "month": "November 2026",
+        "amount": 16426.21
+      },
+      {
+        "month": "December 2026",
+        "amount": 7899.08
+      },
+      {
+        "month": "January 2027",
+        "amount": 3224.48
+      },
+      {
+        "month": "February 2027",
+        "amount": 3224.48
+      }
+    ],
+    "major_recurring_items": [
+      {
+        "name": "Annem Beşiroğlu Part 2 - 6",
+        "month": "October 2026",
+        "amount": 28333.35
+      },
+      {
+        "name": "Annem Beşiroğlu Part 2 - 3",
+        "month": "July 2026",
+        "amount": 28333.35
+      },
+      {
+        "name": "Annem Beşiroğlu Part 2 - 4",
+        "month": "August 2026",
+        "amount": 28333.35
+      },
+      {
+        "name": "Annem Beşiroğlu Part 2 - 5",
+        "month": "September 2026",
+        "amount": 28333.35
+      }
+    ]
+  }
+}

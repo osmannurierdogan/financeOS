@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finansal Durum Panosu</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1" integrity="sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ" crossorigin="anonymous"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#132420; --teal-900:#0d2b26; --teal-800:#123a33; --teal-700:#1b4b43;
+    --teal-100:#e4efeb; --cream:#faf7f0; --card:#ffffff; --gold:#b9902f; --gold-soft:#f1e3bd;
+    --coral:#b5453c; --coral-soft:#f7e3e0; --green-ok:#3f7a5e; --green-soft:#e2efe7;
+    --line:#e5e0d3; --text-soft:#5c6b66; --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--cream);color:var(--ink);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1180px;margin:0 auto;padding:28px 20px 80px;}
+  h1,h2,h3{font-family:'Fraunces',serif;margin:0;}
+  .top{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;margin-bottom:22px;border-bottom:1px solid var(--line);padding-bottom:20px;}
+  .top h1{font-size:30px;font-weight:600;color:var(--teal-900);letter-spacing:-.01em;}
+  .top .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:6px;}
+  .top .meta{font-size:13px;color:var(--text-soft);}
+  .btn-row{display:flex;gap:8px;flex-wrap:wrap;}
+  .btn{border:1px solid var(--teal-700);color:var(--teal-700);background:transparent;padding:9px 16px;border-radius:999px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:.15s;}
+  .btn:hover{background:var(--teal-700);color:#fff;}
+  .btn.active{background:var(--teal-700);color:#fff;}
+  .btn.ghost{border-color:var(--line);color:var(--text-soft);}
+  .btn.ghost:hover{background:var(--ink);color:#fff;border-color:var(--ink);}
+  #status-banner{display:none;background:var(--coral-soft);color:var(--coral);border:1px solid var(--coral);border-radius:10px;padding:10px 16px;font-size:13px;margin-bottom:18px;}
+
+  .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+  .kpi{background:var(--card);border-radius:var(--radius);padding:20px 22px;box-shadow:0 1px 2px rgba(19,36,32,.05);border:1px solid var(--line);}
+  .kpi .label{font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-soft);margin-bottom:8px;font-weight:600;}
+  .kpi .value{font-family:'Fraunces',serif;font-size:26px;font-weight:600;color:var(--teal-900);}
+  .kpi .sub{font-size:12.5px;margin-top:6px;color:var(--text-soft);}
+  .kpi.warn .value{color:var(--coral);} .kpi.ok .value{color:var(--green-ok);} .kpi.gold .value{color:var(--gold);}
+
+  .grid2{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;margin-bottom:16px;}
+  .panel{background:var(--card);border-radius:var(--radius);padding:22px 24px;box-shadow:0 1px 2px rgba(19,36,32,.05);border:1px solid var(--line);margin-bottom:16px;}
+  .panel h2{font-size:17px;font-weight:600;color:var(--teal-900);margin-bottom:4px;}
+  .panel .desc{font-size:12.5px;color:var(--text-soft);margin-bottom:16px;}
+  .callout{background:var(--gold-soft);border:1px solid var(--gold);border-radius:10px;padding:12px 14px;font-size:12.5px;color:#5c4a12;margin-top:12px;line-height:1.55;}
+
+  .step{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--line);}
+  .step:last-child{border-bottom:none;}
+  .step .num{width:26px;height:26px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;font-family:'Fraunces',serif;background:var(--teal-100);color:var(--teal-800);}
+  .step.urgent .num{background:var(--coral-soft);color:var(--coral);}
+  .step.done .num{background:var(--green-soft);color:var(--green-ok);}
+  .step .body{flex:1;}
+  .step .title{font-weight:600;font-size:14.5px;color:var(--ink);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .step .title .tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:2px 8px;border-radius:999px;background:var(--coral-soft);color:var(--coral);}
+  .step.ok .title .tag{background:var(--green-soft);color:var(--green-ok);}
+  .step.wait .title .tag{background:var(--teal-100);color:var(--teal-800);}
+  .step .note{font-size:12.5px;color:var(--text-soft);margin-top:4px;line-height:1.5;}
+  .step input[type=checkbox]{width:17px;height:17px;accent-color:var(--teal-700);flex:none;margin-top:2px;}
+
+  table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  thead th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-soft);font-weight:600;padding:8px 8px;border-bottom:1px solid var(--line);}
+  tbody td{padding:9px 8px;border-bottom:1px solid var(--line);}
+  tbody tr:last-child td{border-bottom:none;}
+  .bar-bg{width:100%;height:6px;background:var(--teal-100);border-radius:99px;overflow:hidden;}
+  .bar-fill{height:100%;background:var(--gold);}
+  input.edit{width:90px;padding:4px 6px;border:1px solid var(--line);border-radius:6px;font-family:'Inter',sans-serif;font-size:13px;text-align:right;}
+  input.edit:disabled{border:none;background:transparent;color:var(--ink);padding:4px 0;}
+
+  .family-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);gap:10px;flex-wrap:wrap;}
+  .family-row:last-child{border-bottom:none;}
+  .family-row .name{font-weight:600;font-size:14px;}
+  .family-row .amt{font-family:'Fraunces',serif;font-size:18px;color:var(--teal-900);}
+  .family-row .amt.zero{color:var(--green-ok);}
+  .pay-form{display:flex;gap:6px;align-items:center;}
+  .pay-form input{width:80px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;font-size:12.5px;}
+  .pay-form button{border:none;background:var(--teal-700);color:#fff;padding:6px 10px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
+  .pay-form button:hover{background:var(--teal-900);}
+
+  .gold-card{display:flex;align-items:center;gap:18px;}
+  .gold-visual{width:64px;height:64px;border-radius:50%;flex:none;background:radial-gradient(circle at 32% 28%, #f4dfa0, var(--gold) 70%);box-shadow:inset 0 -6px 10px rgba(0,0,0,.15);}
+  .footnote{font-size:11.5px;color:var(--text-soft);margin-top:18px;line-height:1.6;}
+  .chart-box{position:relative;height:230px;}
+  .chart-box.tall{height:280px;}
+
+  @media(max-width:900px){ .kpi-row{grid-template-columns:repeat(2,1fr);} .grid2{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div>
+      <div class="eyebrow">Finansal Pusula</div>
+      <h1>Finansal Durum Panosu</h1>
+      <div class="meta" id="last-updated">Yükleniyor…</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn" id="edit-btn">Düzenlemeyi Aç</button>
+      <button class="btn ghost" id="download-btn">JSON İndir</button>
+    </div>
+  </div>
+
+  <div id="status-banner"></div>
+
+  <div class="kpi-row">
+    <div class="kpi warn"><div class="label">Toplam Borç</div><div class="value" id="kpi-total-debt">–</div><div class="sub">Kart + aile borçları</div></div>
+    <div class="kpi gold"><div class="label">Altın Birikimi</div><div class="value" id="kpi-gold-value">–</div><div class="sub" id="kpi-gold-sub">–</div></div>
+    <div class="kpi ok"><div class="label">Net Durum</div><div class="value" id="kpi-net">–</div><div class="sub">Altın − toplam borç</div></div>
+    <div class="kpi"><div class="label">Bu Ay Kalan Nakit</div><div class="value" id="kpi-cash-left">–</div><div class="sub">Gelir − sabit giderler</div></div>
+  </div>
+
+  <div class="grid2">
+    <div class="panel">
+      <h2>Öncelik Sırası</h2>
+      <div class="desc">Yukarıdan aşağıya doğru; önce en üsttekini bitirin.</div>
+      <div id="roadmap"></div>
+    </div>
+    <div class="panel">
+      <h2>Kart Borcu Dağılımı</h2>
+      <div class="desc">Bankaya göre toplam borç (güncel bakiye)</div>
+      <div class="chart-box"><canvas id="bankChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Kredi Kartı Detayı</h2>
+    <div class="desc">Tutarlar güncellendikçe düzenleme modunu açıp değiştirebilirsiniz.</div>
+    <table>
+      <thead><tr><th>Banka</th><th>Borç (TL)</th><th>Limit (TL)</th><th style="width:140px;">Kullanım</th></tr></thead>
+      <tbody id="debt-table"></tbody>
+    </table>
+  </div>
+
+  <div class="grid2">
+    <div class="panel">
+      <h2>Aile Borçları</h2>
+      <div class="desc">Faizsiz, ama takip etmeye değer — küçük ödemeler ekleyerek azaltın.</div>
+      <div id="family-list"></div>
+    </div>
+    <div class="panel">
+      <h2>Altın Varlığı</h2>
+      <div class="desc">Bu birikime dokunulmayacak şekilde plana dahil edilmiştir.</div>
+      <div class="gold-card">
+        <div class="gold-visual"></div>
+        <div style="flex:1;">
+          <div style="display:flex;gap:16px;margin-bottom:10px;">
+            <div><div style="font-size:11px;color:var(--text-soft);text-transform:uppercase;letter-spacing:.06em;">Gram</div><input class="edit" id="gold-grams" disabled style="width:70px;"></div>
+            <div><div style="font-size:11px;color:var(--text-soft);text-transform:uppercase;letter-spacing:.06em;">Gram Fiyatı (TL)</div><input class="edit" id="gold-price" disabled style="width:90px;"></div>
+          </div>
+          <div style="font-family:'Fraunces',serif;font-size:22px;color:var(--gold);" id="gold-total"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Aylık Nakit Akışı</h2>
+    <div class="desc">Gelir, sabit giderler ve elde kalan tutar</div>
+    <div style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px;">
+      <div><div style="font-size:11px;color:var(--text-soft);text-transform:uppercase;">Aylık Gelir (TL)</div><input class="edit" id="income" disabled style="width:100px;"></div>
+      <div><div style="font-size:11px;color:var(--text-soft);text-transform:uppercase;">Sabit / Taksit Giderleri (TL)</div><input class="edit" id="fixed-cost" disabled style="width:100px;"></div>
+    </div>
+    <div class="chart-box" style="height:120px;"><canvas id="cashChart"></canvas></div>
+  </div>
+
+  <div class="panel">
+    <h2>Harcama Geçmişi</h2>
+    <div class="desc">Notion bütçe takibinizden — Mayıs 2025'ten Şubat 2027'ye kadar (son aylar planlanan/taksitli tutarlardır)</div>
+    <div class="chart-box tall"><canvas id="historyChart"></canvas></div>
+  </div>
+
+  <div class="grid2">
+    <div class="panel">
+      <h2>Son 3 Ay: Kategori Dağılımı</h2>
+      <div class="desc">Nisan–Haziran 2026 toplam harcaması, kategoriye göre</div>
+      <div class="chart-box"><canvas id="categoryChart"></canvas></div>
+      <div class="callout" id="health-callout"></div>
+    </div>
+    <div class="panel">
+      <h2>Önümüzdeki Aylarda Planlı Harcama</h2>
+      <div class="desc">Temmuz 2026 – Şubat 2027, kayıtlı taksitler dahil</div>
+      <div class="chart-box"><canvas id="upcomingChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="footnote" id="footnote"></div>
+</div>
+
+<script>
+const DATA_URL = './data.json';
+const LOCAL_KEY = 'financial-dashboard-draft-v1';
+
+let DATA = null;       // full loaded json (meta + snapshot + history)
+let state = null;      // = DATA.snapshot (editable)
+let editMode = false;
+let usingFallback = false;
+let bankChart, cashChart, historyChart, categoryChart, upcomingChart;
+
+const fmt = n => Math.round(n).toLocaleString('tr-TR') + ' TL';
+
+const FALLBACK_SNAPSHOT = {
+  income: 140000, fixedCost: 85000, goldGrams: 60, goldPrice: 6200,
+  debts: [
+    {bank:'Yapı Kredi',debt:233961,limit:750000},{bank:'Akbank',debt:24987,limit:52000},
+    {bank:'TOM Bank',debt:22789,limit:100000},{bank:'Garanti BBVA',debt:20325,limit:250000},
+    {bank:'Türkiye İş Bankası',debt:19833,limit:387760},{bank:'QNB',debt:3058,limit:25000},
+    {bank:'Enpara',debt:1061,limit:40000},{bank:'VakıfBank',debt:0,limit:85000}
+  ],
+  faizliDebt: 50000,
+  family: [{name:'Anne',amount:40000},{name:'Abi',amount:26000}],
+  roadmapChecks: [false,false,false,false,false]
+};
+
+async function loadData() {
+  try {
+    const res = await fetch(DATA_URL, {cache:'no-store'});
+    if (!res.ok) throw new Error('data.json bulunamadı');
+    DATA = await res.json();
+    usingFallback = false;
+  } catch (e) {
+    showBanner('data.json okunamadı (dosya:// olarak mı açtınız? GitHub Pages veya bir local server ile açmayı deneyin). Şimdilik örnek veriler gösteriliyor.');
+    DATA = { meta:{generated:'-'}, snapshot: JSON.parse(JSON.stringify(FALLBACK_SNAPSHOT)), history:null };
+    usingFallback = true;
+  }
+  // apply local draft overrides on top, if any
+  try {
+    const draft = localStorage.getItem(LOCAL_KEY);
+    if (draft) {
+      const parsed = JSON.parse(draft);
+      DATA.snapshot = Object.assign({}, DATA.snapshot, parsed);
+      showBanner('Bu tarayıcıda kaydedilmiş yerel bir taslak yüklendi. Kalıcı hale getirmek için "JSON İndir" ile indirip GitHub\'a push\'layın.', true);
+    }
+  } catch(e){}
+  state = DATA.snapshot;
+  render();
+}
+
+function showBanner(msg, isInfo){
+  const el = document.getElementById('status-banner');
+  el.textContent = msg;
+  el.style.display = 'block';
+  if (isInfo){ el.style.background = 'var(--gold-soft)'; el.style.color = '#5c4a12'; el.style.borderColor='var(--gold)'; }
+}
+
+function saveDraft(){
+  try { localStorage.setItem(LOCAL_KEY, JSON.stringify(state)); } catch(e){}
+  render();
+}
+
+function totalCardDebt(){ return state.debts.reduce((s,d)=>s+Number(d.debt||0),0); }
+function totalFamilyDebt(){ return state.family.reduce((s,f)=>s+Number(f.amount||0),0); }
+function goldValue(){ return Number(state.goldGrams||0) * Number(state.goldPrice||0); }
+
+const ROADMAP = [
+  { title:'Faizli 50.000 TL\'yi kapat', tag:'ACİL', type:'urgent',
+    note:'Bu kısma aylık ~%3,25–3,75 akdi faiz + vergiler işliyor. Ödenmeden geçen her ay bakiye büyür.',
+    check: s => Number(s.faizliDebt||0) <= 0 },
+  { title:'Nakit akışını 1 ay boyunca takip et', tag:'DEVAM EDİYOR', type:'wait',
+    note:'Gerçek harcamaları görmeden bütçe kurmak zor. Market, günlük harcama gibi kalemleri kategorilere ayırarak izle.' },
+  { title:'Taksitli borcu normal seyrinde bitir', tag:'PLANDA', type:'wait',
+    note:'Ekstra ödeme yapmaya gerek yok, sadece aksatmadan devam.' },
+  { title:'Aile borçlarını (Anne + Abi) kapat', tag:'PLANDA', type:'wait',
+    note:'Faizsiz ama ilişki açısından önemli — düzenli küçük ödemelerle azalt.' },
+  { title:'Acil durum fonu + düzenli birikim başlat', tag:'SONRAKİ AŞAMA', type:'wait',
+    note:'Faizli borç ve aile borçları bitince, 2-3 aylık gideri karşılayacak bir fon oluştur.' }
+];
+
+function render(){
+  document.getElementById('last-updated').textContent = usingFallback
+    ? 'Örnek veri (data.json bulunamadı)'
+    : 'Veri kaynağı: data.json' + (DATA.meta && DATA.meta.generated ? ' • ' + DATA.meta.generated : '');
+
+  const cardDebt = totalCardDebt(), famDebt = totalFamilyDebt(), total = cardDebt+famDebt;
+  const gVal = goldValue(), net = gVal-total;
+  const cashLeft = Number(state.income||0) - Number(state.fixedCost||0);
+
+  document.getElementById('kpi-total-debt').textContent = fmt(total);
+  document.getElementById('kpi-gold-value').textContent = fmt(gVal);
+  document.getElementById('kpi-gold-sub').textContent = state.goldGrams + ' gr × ' + Number(state.goldPrice).toLocaleString('tr-TR') + ' TL';
+  document.getElementById('kpi-net').textContent = (net>=0?'+':'') + fmt(net);
+  document.getElementById('kpi-cash-left').textContent = fmt(cashLeft);
+
+  const rm = document.getElementById('roadmap'); rm.innerHTML = '';
+  ROADMAP.forEach((step,i)=>{
+    const checked = step.check ? step.check(state) : !!state.roadmapChecks[i];
+    const div = document.createElement('div');
+    div.className = 'step ' + (checked ? 'done' : step.type);
+    div.innerHTML = `<input type="checkbox" ${checked?'checked':''} ${step.check?'disabled':''} data-idx="${i}">
+      <div class="num">${i+1}</div>
+      <div class="body"><div class="title">${step.title} <span class="tag">${checked?'TAMAM':step.tag}</span></div>
+      <div class="note">${step.note}</div></div>`;
+    rm.appendChild(div);
+  });
+  rm.querySelectorAll('input[type=checkbox]:not([disabled])').forEach(cb=>{
+    cb.addEventListener('change', e=>{ state.roadmapChecks[Number(e.target.dataset.idx)] = e.target.checked; saveDraft(); });
+  });
+
+  const tbody = document.getElementById('debt-table'); tbody.innerHTML='';
+  state.debts.forEach((d,i)=>{
+    const pct = d.limit>0 ? Math.min(100,(d.debt/d.limit)*100) : 0;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${d.bank}</td>
+      <td><input class="edit" data-field="debt" data-idx="${i}" value="${d.debt}" ${editMode?'':'disabled'}></td>
+      <td><input class="edit" data-field="limit" data-idx="${i}" value="${d.limit}" ${editMode?'':'disabled'}></td>
+      <td><div class="bar-bg"><div class="bar-fill" style="width:${pct}%;"></div></div>
+      <div style="font-size:11px;color:var(--text-soft);margin-top:3px;">%${pct.toFixed(0)}</div></td>`;
+    tbody.appendChild(tr);
+  });
+  tbody.querySelectorAll('input').forEach(inp=>{
+    inp.addEventListener('change', e=>{
+      state.debts[Number(e.target.dataset.idx)][e.target.dataset.field] = Number(e.target.value)||0;
+      saveDraft();
+    });
+  });
+
+  const fl = document.getElementById('family-list'); fl.innerHTML='';
+  state.family.forEach((f,i)=>{
+    const row = document.createElement('div'); row.className='family-row';
+    row.innerHTML = `<div class="name">${f.name}</div>
+      <div class="amt ${f.amount<=0?'zero':''}">${f.amount<=0?'Kapandı ✓':fmt(f.amount)}</div>
+      <div class="pay-form"><input type="number" placeholder="Ödeme" data-idx="${i}" min="0"><button data-idx="${i}">Ekle</button></div>`;
+    fl.appendChild(row);
+  });
+  fl.querySelectorAll('button').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+      const idx = Number(e.target.dataset.idx);
+      const input = fl.querySelector(`input[data-idx="${idx}"]`);
+      const val = Number(input.value)||0;
+      if (val>0){ state.family[idx].amount = Math.max(0, state.family[idx].amount-val); input.value=''; saveDraft(); }
+    });
+  });
+
+  document.getElementById('gold-grams').value = state.goldGrams;
+  document.getElementById('gold-price').value = state.goldPrice;
+  document.getElementById('gold-grams').disabled = !editMode;
+  document.getElementById('gold-price').disabled = !editMode;
+  document.getElementById('gold-total').textContent = fmt(gVal);
+
+  document.getElementById('income').value = state.income;
+  document.getElementById('fixed-cost').value = state.fixedCost;
+  document.getElementById('income').disabled = !editMode;
+  document.getElementById('fixed-cost').disabled = !editMode;
+
+  document.getElementById('footnote').textContent =
+    'Bu pano tahmini verilerle çalışır ve finansal/yatırım tavsiyesi yerine geçmez. "history" verileri Notion bütçe takibinizden bir kerelik alınmıştır; yeni bir dışa aktarım yaptığınızda data.json\'daki "history" bölümünü değiştirerek güncelleyebilirsiniz.';
+
+  renderCharts(cashLeft);
+}
+
+function renderCharts(cashLeft){
+  const bankData = state.debts.filter(d=>d.debt>0);
+  if (bankChart) bankChart.destroy();
+  bankChart = new Chart(document.getElementById('bankChart').getContext('2d'), {
+    type:'doughnut',
+    data:{ labels:bankData.map(d=>d.bank), datasets:[{ data:bankData.map(d=>d.debt),
+      backgroundColor:['#123a33','#1b4b43','#3f7a5e','#b9902f','#d9b25c','#b5453c','#8a9b95','#5c6b66'],
+      borderWidth:2, borderColor:'#ffffff' }]},
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'right',labels:{boxWidth:10,font:{size:11}}}} }
+  });
+
+  if (cashChart) cashChart.destroy();
+  cashChart = new Chart(document.getElementById('cashChart').getContext('2d'), {
+    type:'bar',
+    data:{ labels:['Bu Ay'], datasets:[
+      {label:'Sabit Giderler', data:[state.fixedCost], backgroundColor:'#b5453c'},
+      {label:'Kalan', data:[Math.max(0,cashLeft)], backgroundColor:'#3f7a5e'}
+    ]},
+    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      scales:{ x:{stacked:true, max:state.income}, y:{stacked:true} },
+      plugins:{ legend:{position:'bottom',labels:{boxWidth:10,font:{size:11}}} } }
+  });
+
+  const hist = DATA.history;
+  if (!hist) return;
+
+  if (historyChart) historyChart.destroy();
+  const monthly = hist.monthly_expense_history || [];
+  historyChart = new Chart(document.getElementById('historyChart').getContext('2d'), {
+    type:'line',
+    data:{ labels: monthly.map(m=>m.month),
+      datasets:[{ label:'Aylık Harcama', data: monthly.map(m=>m.expense),
+        borderColor:'#123a33', backgroundColor:'rgba(18,58,51,.08)', fill:true, tension:.25, pointRadius:2 }] },
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false} },
+      scales:{ x:{ ticks:{ font:{size:10}, maxRotation:60, minRotation:60 } }, y:{ ticks:{ callback:v=>(v/1000)+'K' } } } }
+  });
+
+  if (categoryChart) categoryChart.destroy();
+  const cats = (hist.recent_category_breakdown||[]).slice(0,8);
+  categoryChart = new Chart(document.getElementById('categoryChart').getContext('2d'), {
+    type:'bar',
+    data:{ labels:cats.map(c=>c.group), datasets:[{ data:cats.map(c=>c.amount), backgroundColor:'#b9902f' }] },
+    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+      scales:{ x:{ ticks:{ callback:v=>(v/1000)+'K' } } } }
+  });
+  const health = cats.find(c=>c.group==='Health');
+  const cb = document.getElementById('health-callout');
+  if (health) {
+    cb.innerHTML = `<strong>Sağlık kalemi dikkat çekiyor:</strong> Nisan–Haziran 2026 arasında yalnızca "Health" kategorisinde ${fmt(health.amount)} harcanmış. Notion verisinde bunun büyük kısmı "Annem Beşiroğlu" adlı, 6 taksitli iki ayrı tedavi ödemesinden oluşuyor (aylık ~28.300 TL, Ekim 2026'ya kadar sürüyor). Bu, aylık sabit giderlerinizin önemli bir parçası — bütçe planlarken bu kalemi ayrı tutmakta fayda var.`;
+  } else { cb.style.display='none'; }
+
+  if (upcomingChart) upcomingChart.destroy();
+  const upcoming = hist.upcoming_committed_expense || [];
+  upcomingChart = new Chart(document.getElementById('upcomingChart').getContext('2d'), {
+    type:'bar',
+    data:{ labels:upcoming.map(u=>u.month), datasets:[{ data:upcoming.map(u=>u.amount), backgroundColor:'#1b4b43' }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+      scales:{ x:{ ticks:{font:{size:10}, maxRotation:45, minRotation:45} }, y:{ ticks:{ callback:v=>(v/1000)+'K' } } } }
+  });
+}
+
+document.getElementById('edit-btn').addEventListener('click', ()=>{
+  editMode = !editMode;
+  document.getElementById('edit-btn').textContent = editMode ? 'Düzenlemeyi Kapat ve Kaydet' : 'Düzenlemeyi Aç';
+  document.getElementById('edit-btn').classList.toggle('active', editMode);
+  if (!editMode){
+    state.income = Number(document.getElementById('income').value)||0;
+    state.fixedCost = Number(document.getElementById('fixed-cost').value)||0;
+    state.goldGrams = Number(document.getElementById('gold-grams').value)||0;
+    state.goldPrice = Number(document.getElementById('gold-price').value)||0;
+    saveDraft();
+  } else { render(); }
+});
+
+document.getElementById('download-btn').addEventListener('click', ()=>{
+  const out = { meta: Object.assign({}, DATA.meta, {generated: new Date().toISOString().slice(0,10)}), snapshot: state, history: DATA.history };
+  const blob = new Blob([JSON.stringify(out, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'data.json';
+  a.click();
+});
+
+loadData();
+</script>
+</body>
+</html>
