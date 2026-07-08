@@ -13,6 +13,9 @@
     --teal-100:#e4efeb; --cream:#faf7f0; --card:#ffffff; --gold:#b9902f; --gold-soft:#f1e3bd;
     --coral:#b5453c; --coral-soft:#f7e3e0; --green-ok:#3f7a5e; --green-soft:#e2efe7;
     --line:#e5e0d3; --text-soft:#5c6b66; --radius:14px;
+    --series-1:#123a33; --series-2:#1b4b43; --series-3:#3f7a5e; --series-4:#b9902f;
+    --series-5:#d9b25c; --series-6:#b5453c; --series-7:#7a6a9e; --series-8:#4f7fa3;
+    --series-9:#8a9b95; --series-other:#c3c2b7;
   }
   *{box-sizing:border-box;}
   body{margin:0;background:var(--cream);color:var(--ink);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;}
@@ -37,11 +40,16 @@
   .kpi .sub{font-size:12.5px;margin-top:6px;color:var(--text-soft);}
   .kpi.warn .value{color:var(--coral);} .kpi.ok .value{color:var(--green-ok);} .kpi.gold .value{color:var(--gold);}
 
+  .section-label{font-size:11.5px;text-transform:uppercase;letter-spacing:.12em;color:var(--gold);font-weight:700;margin:32px 0 10px;}
+  .section-label:first-of-type{margin-top:0;}
+
   .grid2{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;margin-bottom:16px;}
+  .grid2.even{grid-template-columns:1fr 1fr;}
   .panel{background:var(--card);border-radius:var(--radius);padding:22px 24px;box-shadow:0 1px 2px rgba(19,36,32,.05);border:1px solid var(--line);margin-bottom:16px;}
   .panel h2{font-size:17px;font-weight:600;color:var(--teal-900);margin-bottom:4px;}
   .panel .desc{font-size:12.5px;color:var(--text-soft);margin-bottom:16px;}
   .callout{background:var(--gold-soft);border:1px solid var(--gold);border-radius:10px;padding:12px 14px;font-size:12.5px;color:#5c4a12;margin-top:12px;line-height:1.55;}
+  .callout.soft{background:var(--teal-100);border-color:var(--teal-700);color:var(--teal-900);}
 
   .step{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--line);}
   .step:last-child{border-bottom:none;}
@@ -80,8 +88,25 @@
   .footnote{font-size:11.5px;color:var(--text-soft);margin-top:18px;line-height:1.6;}
   .chart-box{position:relative;height:230px;}
   .chart-box.tall{height:280px;}
+  .chart-box.xtall{height:480px;}
+  .chart-box.short{height:150px;}
 
-  @media(max-width:900px){ .kpi-row{grid-template-columns:repeat(2,1fr);} .grid2{grid-template-columns:1fr;} }
+  .legend-note{font-size:11.5px;color:var(--text-soft);margin-top:10px;}
+  .badge{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:2px 8px;border-radius:999px;margin-left:6px;}
+  .badge.actual{background:var(--green-soft);color:var(--green-ok);}
+  .badge.planned{background:var(--gold-soft);color:#5c4a12;}
+
+  .table-scroll{overflow-x:auto;overflow-y:auto;}
+  .table-scroll.tall{max-height:420px;}
+  table.heatmap{font-size:12px;white-space:nowrap;}
+  table.heatmap th, table.heatmap td{padding:6px 9px;text-align:right;}
+  table.heatmap th:first-child, table.heatmap td:first-child{text-align:left;position:sticky;left:0;background:var(--card);z-index:1;}
+  table.heatmap thead th{position:sticky;top:0;background:var(--card);z-index:2;}
+  table.heatmap thead th:first-child{z-index:3;}
+  table.heatmap td.heat-cell{color:var(--ink);font-variant-numeric:tabular-nums;}
+  table.heatmap td.heat-empty{color:var(--text-soft);}
+
+  @media(max-width:900px){ .kpi-row{grid-template-columns:repeat(2,1fr);} .grid2{grid-template-columns:1fr;} .grid2.even{grid-template-columns:1fr;} }
 </style>
 </head>
 <body>
@@ -108,6 +133,13 @@
     <div class="kpi"><div class="label">Bu Ay Kalan Nakit</div><div class="value" id="kpi-cash-left">–</div><div class="sub">Gelir − sabit giderler</div></div>
   </div>
 
+  <div class="kpi-row" id="kpi-row-2">
+    <div class="kpi"><div class="label">Ortalama Aylık Harcama</div><div class="value" id="kpi-avg-spend">–</div><div class="sub" id="kpi-avg-spend-sub">–</div></div>
+    <div class="kpi warn"><div class="label">En Yüksek Harcama Ayı</div><div class="value" id="kpi-max-spend">–</div><div class="sub" id="kpi-max-spend-sub">–</div></div>
+    <div class="kpi gold"><div class="label">Kalan Planlı Taksit</div><div class="value" id="kpi-upcoming">–</div><div class="sub" id="kpi-upcoming-sub">–</div></div>
+    <div class="kpi"><div class="label">Ortalama Kart Kullanımı</div><div class="value" id="kpi-util">–</div><div class="sub">Limitlere oranla</div></div>
+  </div>
+
   <div class="grid2">
     <div class="panel">
       <h2>Öncelik Sırası</h2>
@@ -128,6 +160,19 @@
       <thead><tr><th>Banka</th><th>Borç (TL)</th><th>Limit (TL)</th><th style="width:140px;">Kullanım</th></tr></thead>
       <tbody id="debt-table"></tbody>
     </table>
+  </div>
+
+  <div class="grid2 even">
+    <div class="panel">
+      <h2>Kart Kullanım Oranı</h2>
+      <div class="desc">Borç / limit oranı — yeşil düşük, altın orta, kırmızı yüksek risk</div>
+      <div class="chart-box"><canvas id="utilChart"></canvas></div>
+    </div>
+    <div class="panel">
+      <h2>Varlık vs Borç</h2>
+      <div class="desc">Altın birikimi ile toplam borcun karşılaştırması</div>
+      <div class="chart-box"><canvas id="avlChart"></canvas></div>
+    </div>
   </div>
 
   <div class="grid2">
@@ -162,24 +207,69 @@
     <div class="chart-box" style="height:120px;"><canvas id="cashChart"></canvas></div>
   </div>
 
+  <div class="section-label">Ay Ay Harcama</div>
+
   <div class="panel">
-    <h2>Harcama Geçmişi</h2>
-    <div class="desc">Notion bütçe takibinizden — Mayıs 2025'ten Şubat 2027'ye kadar (son aylar planlanan/taksitli tutarlardır)</div>
-    <div class="chart-box tall"><canvas id="historyChart"></canvas></div>
+    <h2>Harcama Geçmişi <span class="badge actual">Gerçekleşen</span><span class="badge planned">Planlanan</span></h2>
+    <div class="desc" id="history-desc">Notion bütçe takibinizden — aylık toplam harcama. Kesikli çizgi güncel aya kadarki referans aylık geliri gösterir.</div>
+    <div class="chart-box xtall"><canvas id="historyChart"></canvas></div>
   </div>
 
-  <div class="grid2">
+  <div class="panel">
+    <h2>Ay Ay, Kalem Kalem Harcama Kırılımı</h2>
+    <div class="desc" id="monthlyCategory-desc">Her ayın toplam harcaması, hangi kategoriye ne kadar gittiği gösterilerek — yığılmış çubuklar</div>
+    <div class="chart-box xtall" style="height:520px;"><canvas id="monthlyCategoryChart"></canvas></div>
+  </div>
+
+  <div class="panel">
+    <h2>Ay × Kategori Isı Haritası</h2>
+    <div class="desc" id="heatmap-desc">Aynı verinin tam sayılarla tablo hâli — koyu renk, o kategoride o aya göre daha yüksek harcamayı gösterir</div>
+    <div class="table-scroll tall">
+      <table class="heatmap">
+        <thead><tr id="heatmap-head"></tr></thead>
+        <tbody id="heatmap-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="section-label">Kalem Kalem Harcama</div>
+
+  <div class="panel">
+    <h2>Kategoriye Göre Tüm Harcamalar</h2>
+    <div class="desc" id="category-desc">Tüm dönem toplamı, her kalemin toplam tutarı — büyükten küçüğe</div>
+    <div class="chart-box xtall"><canvas id="categoryChart"></canvas></div>
+    <div class="callout soft" id="category-note"></div>
+    <div class="callout" id="health-callout"></div>
+  </div>
+
+  <div class="grid2 even">
     <div class="panel">
-      <h2>Son 3 Ay: Kategori Dağılımı</h2>
-      <div class="desc">Nisan–Haziran 2026 toplam harcaması, kategoriye göre</div>
-      <div class="chart-box"><canvas id="categoryChart"></canvas></div>
-      <div class="callout" id="health-callout"></div>
+      <h2>Kategori Oranı</h2>
+      <div class="desc">En büyük 6 kalem ve geri kalanların toplamı ("Diğer")</div>
+      <div class="chart-box"><canvas id="categoryDonut"></canvas></div>
     </div>
     <div class="panel">
-      <h2>Önümüzdeki Aylarda Planlı Harcama</h2>
-      <div class="desc">Temmuz 2026 – Şubat 2027, kayıtlı taksitler dahil</div>
-      <div class="chart-box"><canvas id="upcomingChart"></canvas></div>
+      <h2>Bankalara Göre Toplam Harcama</h2>
+      <div class="desc">Tüm zamanların kart harcaması, bankaya göre</div>
+      <div class="chart-box"><canvas id="bankSpendChart"></canvas></div>
     </div>
+  </div>
+
+  <div class="panel" id="recurring-panel">
+    <h2>Öne Çıkan Tekrarlayan Ödemeler</h2>
+    <div class="desc">Taksitli büyük kalemler — hangi ayda ne kadar düştüğünü gösterir</div>
+    <div class="table-scroll tall">
+      <table>
+        <thead><tr><th>Kalem</th><th>Ay</th><th style="text-align:right;">Tutar (TL)</th></tr></thead>
+        <tbody id="recurring-table"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Önümüzdeki Aylarda Planlı Harcama</h2>
+    <div class="desc" id="upcoming-desc">Kayıtlı taksitler dahil, ay ay dağılım</div>
+    <div class="chart-box tall"><canvas id="upcomingChart"></canvas></div>
   </div>
 
   <div class="footnote" id="footnote"></div>
@@ -188,14 +278,17 @@
 <script>
 const DATA_URL = './data.json';
 const LOCAL_KEY = 'financial-dashboard-draft-v1';
+const CAT_COLORS = ['#123a33','#1b4b43','#3f7a5e','#b9902f','#d9b25c','#b5453c','#8a9b95','#5c6b66','#7a6a9e','#4f7fa3'];
+const OTHER_COLOR = '#c3c2b7';
 
 let DATA = null;       // full loaded json (meta + snapshot + history)
 let state = null;      // = DATA.snapshot (editable)
 let editMode = false;
 let usingFallback = false;
-let bankChart, cashChart, historyChart, categoryChart, upcomingChart;
+let bankChart, cashChart, historyChart, categoryChart, categoryDonut, upcomingChart, utilChart, avlChart, bankSpendChart, monthlyCategoryChart;
 
 const fmt = n => Math.round(n).toLocaleString('tr-TR') + ' TL';
+const fmt1 = n => n.toLocaleString('tr-TR', {maximumFractionDigits:1, minimumFractionDigits:0});
 
 const FALLBACK_SNAPSHOT = {
   income: 140000, fixedCost: 85000, goldGrams: 60, goldPrice: 6200,
@@ -279,6 +372,8 @@ function render(){
   document.getElementById('kpi-net').textContent = (net>=0?'+':'') + fmt(net);
   document.getElementById('kpi-cash-left').textContent = fmt(cashLeft);
 
+  renderKpiRow2();
+
   const rm = document.getElementById('roadmap'); rm.innerHTML = '';
   ROADMAP.forEach((step,i)=>{
     const checked = step.check ? step.check(state) : !!state.roadmapChecks[i];
@@ -341,20 +436,132 @@ function render(){
   document.getElementById('fixed-cost').disabled = !editMode;
 
   document.getElementById('footnote').textContent =
-    'Bu pano tahmini verilerle çalışır ve finansal/yatırım tavsiyesi yerine geçmez. "history" verileri Notion bütçe takibinizden bir kerelik alınmıştır; yeni bir dışa aktarım yaptığınızda data.json\'daki "history" bölümünü değiştirerek güncelleyebilirsiniz.';
+    'Bu pano tahmini verilerle çalışır ve finansal/yatırım tavsiyesi yerine geçmez. "history" verileri Notion bütçe takibinizden bir kerelik alınmıştır; yeni bir dışa aktarım yaptığınızda data.json\'daki "history" bölümünü değiştirerek güncelleyebilirsiniz. Kategori kırılımı yalnızca son 3 aylık toplu bir veridir — aya göre kalem kalem bir kırılım için Notion dışa aktarımına işlem bazlı ay+kategori bilgisi eklenmesi gerekir.';
 
-  renderCharts(cashLeft);
+  renderCharts(cashLeft, cardDebt, famDebt, gVal);
 }
 
-function renderCharts(cashLeft){
+function renderKpiRow2(){
+  const hist = DATA.history;
+  const row2 = document.getElementById('kpi-row-2');
+  if (!hist){ row2.style.display = 'none'; return; }
+  row2.style.display = '';
+
+  const monthly = hist.monthly_expense_history || [];
+  const upcoming = hist.upcoming_committed_expense || [];
+  const boundaryLabel = upcoming.length ? upcoming[0].month : null;
+  const boundaryIdx = boundaryLabel ? monthly.findIndex(m=>m.month===boundaryLabel) : monthly.length;
+  const actualMonths = boundaryIdx >= 0 ? monthly.slice(0, boundaryIdx) : monthly;
+
+  if (actualMonths.length){
+    const avg = actualMonths.reduce((s,m)=>s+m.expense,0)/actualMonths.length;
+    document.getElementById('kpi-avg-spend').textContent = fmt(avg);
+    document.getElementById('kpi-avg-spend-sub').textContent = actualMonths[0].month + ' – ' + actualMonths[actualMonths.length-1].month;
+
+    const maxM = actualMonths.reduce((a,b)=> b.expense>a.expense ? b : a);
+    document.getElementById('kpi-max-spend').textContent = fmt(maxM.expense);
+    document.getElementById('kpi-max-spend-sub').textContent = maxM.month;
+  }
+
+  if (upcoming.length){
+    const total = upcoming.reduce((s,u)=>s+u.amount,0);
+    document.getElementById('kpi-upcoming').textContent = fmt(total);
+    document.getElementById('kpi-upcoming-sub').textContent = upcoming[0].month + ' – ' + upcoming[upcoming.length-1].month;
+  }
+
+  const withLimit = state.debts.filter(d=>d.limit>0);
+  if (withLimit.length){
+    const avgUtil = withLimit.reduce((s,d)=>s+(d.debt/d.limit),0)/withLimit.length*100;
+    document.getElementById('kpi-util').textContent = '%' + avgUtil.toFixed(0);
+  }
+}
+
+function renderMonthlyCategory(hist, monthly, boundaryIdx){
+  const breakdown = hist.monthly_category_breakdown || [];
+  const topCategories = hist.top_categories || [];
+  if (!breakdown.length || !topCategories.length) return;
+
+  const byMonth = {};
+  breakdown.forEach(m => { byMonth[m.month] = {}; m.items.forEach(it => byMonth[m.month][it.group] = it.amount); });
+
+  const months = monthly.map(m=>m.month);
+  const columns = topCategories.concat(['Diğer']);
+  const columnColors = CAT_COLORS.slice(0, topCategories.length).concat([OTHER_COLOR]);
+
+  const matrix = months.map(month => {
+    const cats = byMonth[month] || {};
+    const topVals = topCategories.map(c => cats[c] || 0);
+    const topSum = topVals.reduce((s,v)=>s+v, 0);
+    const monthTotal = (monthly.find(m=>m.month===month)||{}).expense || 0;
+    const other = Math.max(0, monthTotal - topSum);
+    return topVals.concat([other]);
+  });
+
+  if (monthlyCategoryChart) monthlyCategoryChart.destroy();
+  monthlyCategoryChart = new Chart(document.getElementById('monthlyCategoryChart').getContext('2d'), {
+    type:'bar',
+    data:{ labels: months, datasets: columns.map((col,ci) => ({
+      label: col,
+      data: matrix.map(row => row[ci]),
+      backgroundColor: columnColors[ci]
+    })) },
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{position:'bottom', labels:{boxWidth:10, font:{size:10}}},
+        tooltip:{ callbacks:{ label: ctx => ctx.dataset.label+': '+fmt(ctx.raw) } } },
+      scales:{ x:{ stacked:true, ticks:{ font:{size:10}, maxRotation:60, minRotation:60 } },
+        y:{ stacked:true, ticks:{ callback:v=>(v/1000)+'K' } } } }
+  });
+
+  const colMax = columns.map((_,ci) => Math.max(1, ...matrix.map(row => row[ci])));
+  const head = document.getElementById('heatmap-head');
+  head.innerHTML = '<th>Ay</th>' + columns.map(c=>`<th>${c}</th>`).join('');
+  const body = document.getElementById('heatmap-body');
+  body.innerHTML = '';
+  const fmtCell = n => Math.round(n).toLocaleString('tr-TR');
+  months.forEach((month,mi) => {
+    const tr = document.createElement('tr');
+    let cells = `<td>${month}${boundaryIdx>=0 && mi>=boundaryIdx ? ' <span class="badge planned" style="margin-left:4px;">plan</span>' : ''}</td>`;
+    columns.forEach((col,ci) => {
+      const v = matrix[mi][ci];
+      if (v <= 0.5){ cells += `<td class="heat-empty">–</td>`; return; }
+      const alpha = Math.min(0.9, 0.12 + 0.78 * (v / colMax[ci]));
+      cells += `<td class="heat-cell" style="background:rgba(185,144,47,${alpha.toFixed(2)});">${fmtCell(v)}</td>`;
+    });
+    tr.innerHTML = cells;
+    body.appendChild(tr);
+  });
+}
+
+function renderCharts(cashLeft, cardDebt, famDebt, gVal){
   const bankData = state.debts.filter(d=>d.debt>0);
   if (bankChart) bankChart.destroy();
   bankChart = new Chart(document.getElementById('bankChart').getContext('2d'), {
     type:'doughnut',
     data:{ labels:bankData.map(d=>d.bank), datasets:[{ data:bankData.map(d=>d.debt),
-      backgroundColor:['#123a33','#1b4b43','#3f7a5e','#b9902f','#d9b25c','#b5453c','#8a9b95','#5c6b66'],
-      borderWidth:2, borderColor:'#ffffff' }]},
+      backgroundColor:CAT_COLORS, borderWidth:2, borderColor:'#ffffff' }]},
     options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'right',labels:{boxWidth:10,font:{size:11}}}} }
+  });
+
+  const utilData = state.debts.filter(d=>d.limit>0).map(d=>({bank:d.bank, pct: Math.min(100,(d.debt/d.limit)*100)})).sort((a,b)=>b.pct-a.pct);
+  if (utilChart) utilChart.destroy();
+  utilChart = new Chart(document.getElementById('utilChart').getContext('2d'), {
+    type:'bar',
+    data:{ labels:utilData.map(u=>u.bank), datasets:[{ data:utilData.map(u=>u.pct),
+      backgroundColor:utilData.map(u=> u.pct>=70 ? '#b5453c' : u.pct>=30 ? '#b9902f' : '#3f7a5e') }] },
+    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false},
+      tooltip:{callbacks:{label: ctx => '%'+ctx.raw.toFixed(1)}}},
+      scales:{ x:{ min:0, max:100, ticks:{ callback:v=>'%'+v } } } }
+  });
+
+  if (avlChart) avlChart.destroy();
+  avlChart = new Chart(document.getElementById('avlChart').getContext('2d'), {
+    type:'bar',
+    data:{ labels:['Varlık (Altın)','Borç (Kart)','Borç (Aile)'], datasets:[{
+      data:[gVal, cardDebt, famDebt],
+      backgroundColor:['#b9902f','#b5453c','#e87ba4'] }] },
+    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false},
+      tooltip:{callbacks:{label: ctx => fmt(ctx.raw)}}},
+      scales:{ x:{ ticks:{ callback:v=>(v/1000)+'K' } } } }
   });
 
   if (cashChart) cashChart.destroy();
@@ -370,42 +577,136 @@ function renderCharts(cashLeft){
   });
 
   const hist = DATA.history;
-  if (!hist) return;
+  if (!hist){
+    document.getElementById('recurring-panel').style.display = 'none';
+    return;
+  }
+
+  const monthly = hist.monthly_expense_history || [];
+  const upcoming = hist.upcoming_committed_expense || [];
+  const boundaryLabel = upcoming.length ? upcoming[0].month : null;
+  const boundaryIdx = boundaryLabel ? monthly.findIndex(m=>m.month===boundaryLabel) : -1;
+
+  const actualSeries = monthly.map((m,i)=> (boundaryIdx<0 || i<=boundaryIdx) ? m.expense : null);
+  const plannedSeries = monthly.map((m,i)=> (boundaryIdx>=0 && i>=boundaryIdx) ? m.expense : null);
+  const incomeRef = monthly.map(()=> Number(state.income||0));
 
   if (historyChart) historyChart.destroy();
-  const monthly = hist.monthly_expense_history || [];
   historyChart = new Chart(document.getElementById('historyChart').getContext('2d'), {
     type:'line',
     data:{ labels: monthly.map(m=>m.month),
-      datasets:[{ label:'Aylık Harcama', data: monthly.map(m=>m.expense),
-        borderColor:'#123a33', backgroundColor:'rgba(18,58,51,.08)', fill:true, tension:.25, pointRadius:2 }] },
+      datasets:[
+        { label:'Gerçekleşen', data: actualSeries,
+          borderColor:'#123a33', backgroundColor:'rgba(18,58,51,.08)', fill:true, tension:.25, pointRadius:3, spanGaps:false },
+        { label:'Planlanan / Taksitli', data: plannedSeries,
+          borderColor:'#b9902f', backgroundColor:'rgba(185,144,47,.10)', borderDash:[6,4], fill:true, tension:.25, pointRadius:3, spanGaps:false },
+        { label:'Aylık Gelir (Referans)', data: incomeRef,
+          borderColor:'#8a9b95', borderDash:[3,3], borderWidth:1.5, pointRadius:0, fill:false }
+      ] },
     options:{ responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{display:false} },
+      plugins:{ legend:{position:'bottom',labels:{boxWidth:10,font:{size:11}}},
+        tooltip:{callbacks:{label: ctx => ctx.dataset.label+': '+fmt(ctx.raw)}} },
       scales:{ x:{ ticks:{ font:{size:10}, maxRotation:60, minRotation:60 } }, y:{ ticks:{ callback:v=>(v/1000)+'K' } } } }
   });
+  if (boundaryLabel){
+    document.getElementById('history-desc').textContent =
+      `Notion bütçe takibinizden — ${monthly[0].month} - ${monthly[monthly.length-1].month}. ${boundaryLabel} öncesi gerçekleşen harcamayı, sonrası ise kayıtlı taksit/plan tutarlarını gösterir.`;
+  }
 
+  renderMonthlyCategory(hist, monthly, boundaryIdx);
+
+  const allCats = (hist.all_time_category_breakdown||[]).slice().sort((a,b)=>b.amount-a.amount);
+  const catTotal = allCats.reduce((s,c)=>s+c.amount,0);
   if (categoryChart) categoryChart.destroy();
-  const cats = (hist.recent_category_breakdown||[]).slice(0,8);
+  document.getElementById('categoryChart').parentElement.style.height = Math.max(280, allCats.length*24) + 'px';
   categoryChart = new Chart(document.getElementById('categoryChart').getContext('2d'), {
     type:'bar',
-    data:{ labels:cats.map(c=>c.group), datasets:[{ data:cats.map(c=>c.amount), backgroundColor:'#b9902f' }] },
-    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+    data:{ labels:allCats.map(c=>c.group), datasets:[{ data:allCats.map(c=>c.amount),
+      backgroundColor: allCats.map((_,i)=> CAT_COLORS[i % CAT_COLORS.length]) }] },
+    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false},
+      tooltip:{callbacks:{label: ctx => fmt(ctx.raw) + '  (%' + (ctx.raw/catTotal*100).toFixed(1) + ')'}}},
       scales:{ x:{ ticks:{ callback:v=>(v/1000)+'K' } } } }
   });
-  const health = cats.find(c=>c.group==='Health');
+
+  const catNote = document.getElementById('category-note');
+  const catDesc = document.getElementById('category-desc');
+  catDesc.textContent = `${monthly[0].month} – ${monthly[monthly.length-1].month} dönemi toplam harcaması, ${allCats.length} kalemin tümü, büyükten küçüğe sıralı (toplam ${fmt(catTotal)})`;
+  catNote.textContent = 'Ay ay kırılım için yukarıdaki "Ay Ay, Kalem Kalem Harcama Kırılımı" grafiğine ve ısı haritası tablosuna bakın — buradaki sıralama tüm dönemin toplamını gösterir.';
+
+  const recentCats = (hist.recent_category_breakdown||[]).slice().sort((a,b)=>b.amount-a.amount);
+  const recentTotal = recentCats.reduce((s,c)=>s+c.amount,0);
+  const recentMonths = boundaryIdx>=3 ? monthly.slice(boundaryIdx-3, boundaryIdx) : monthly.slice(0, Math.max(0,boundaryIdx));
+  const recentLabel = recentMonths.length ? `${recentMonths[0].month} – ${recentMonths[recentMonths.length-1].month}` : 'son aylar';
+  const health = recentCats.find(c=>c.group==='Health');
   const cb = document.getElementById('health-callout');
   if (health) {
-    cb.innerHTML = `<strong>Sağlık kalemi dikkat çekiyor:</strong> Nisan–Haziran 2026 arasında yalnızca "Health" kategorisinde ${fmt(health.amount)} harcanmış. Notion verisinde bunun büyük kısmı "Annem Beşiroğlu" adlı, 6 taksitli iki ayrı tedavi ödemesinden oluşuyor (aylık ~28.300 TL, Ekim 2026'ya kadar sürüyor). Bu, aylık sabit giderlerinizin önemli bir parçası — bütçe planlarken bu kalemi ayrı tutmakta fayda var.`;
+    cb.innerHTML = `<strong>Sağlık kalemi dikkat çekiyor:</strong> ${recentLabel} arasında yalnızca "Health" kategorisinde ${fmt(health.amount)} harcanmış (o dönemin toplamının %${(health.amount/recentTotal*100).toFixed(1)}'i). Bunun büyük kısmı "Annem Beşiroğlu" adlı, taksitli iki ayrı tedavi ödemesinden oluşuyor (aylık ~28.300 TL, Ekim 2026'ya kadar sürüyor — aşağıdaki tabloya bakın). Bu, aylık sabit giderlerinizin önemli bir parçası — bütçe planlarken bu kalemi ayrı tutmakta fayda var.`;
   } else { cb.style.display='none'; }
 
+  const topN = 6;
+  const top = allCats.slice(0, topN);
+  const restSum = allCats.slice(topN).reduce((s,c)=>s+c.amount,0);
+  const donutLabels = top.map(c=>c.group).concat(restSum>0 ? ['Diğer'] : []);
+  const donutData = top.map(c=>c.amount).concat(restSum>0 ? [restSum] : []);
+  const donutColors = CAT_COLORS.slice(0, top.length).concat(restSum>0 ? [OTHER_COLOR] : []);
+  if (categoryDonut) categoryDonut.destroy();
+  categoryDonut = new Chart(document.getElementById('categoryDonut').getContext('2d'), {
+    type:'doughnut',
+    data:{ labels:donutLabels, datasets:[{ data:donutData, backgroundColor:donutColors, borderWidth:2, borderColor:'#ffffff' }] },
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{position:'right', labels:{boxWidth:10, font:{size:11},
+        generateLabels: chart => {
+          const ds = chart.data.datasets[0];
+          const total = ds.data.reduce((s,v)=>s+v,0);
+          return chart.data.labels.map((l,i)=>({
+            text: `${l} (%${(ds.data[i]/total*100).toFixed(0)})`,
+            fillStyle: ds.backgroundColor[i], strokeStyle: ds.backgroundColor[i], index:i
+          }));
+        } } },
+        tooltip:{callbacks:{label: ctx => ctx.label+': '+fmt(ctx.raw)}} } }
+  });
+
+  const bankSpend = (hist.bank_expense_totals||[]).slice().sort((a,b)=>b.amount-a.amount);
+  if (bankSpendChart) bankSpendChart.destroy();
+  bankSpendChart = new Chart(document.getElementById('bankSpendChart').getContext('2d'), {
+    type:'bar',
+    data:{ labels:bankSpend.map(b=>b.bank), datasets:[{ data:bankSpend.map(b=>b.amount),
+      backgroundColor: bankSpend.map((_,i)=> CAT_COLORS[i % CAT_COLORS.length]) }] },
+    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false},
+      tooltip:{callbacks:{label: ctx => fmt(ctx.raw)}}},
+      scales:{ x:{ ticks:{ callback:v=>(v/1000)+'K' } } } }
+  });
+
+  const recurring = (hist.major_recurring_items||[]).slice().sort((a,b)=>{
+    const ai = monthly.findIndex(m=>m.month===a.month), bi = monthly.findIndex(m=>m.month===b.month);
+    return ai-bi;
+  });
+  const rt = document.getElementById('recurring-table'); rt.innerHTML = '';
+  if (recurring.length){
+    document.getElementById('recurring-panel').style.display = '';
+    recurring.forEach(r=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${r.name}</td><td>${r.month}</td><td style="text-align:right;font-family:'Fraunces',serif;">${fmt(r.amount)}</td>`;
+      rt.appendChild(tr);
+    });
+  } else {
+    document.getElementById('recurring-panel').style.display = 'none';
+  }
+
   if (upcomingChart) upcomingChart.destroy();
-  const upcoming = hist.upcoming_committed_expense || [];
+  const upcomingList = hist.upcoming_committed_expense || [];
   upcomingChart = new Chart(document.getElementById('upcomingChart').getContext('2d'), {
     type:'bar',
-    data:{ labels:upcoming.map(u=>u.month), datasets:[{ data:upcoming.map(u=>u.amount), backgroundColor:'#1b4b43' }] },
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+    data:{ labels:upcomingList.map(u=>u.month), datasets:[{ data:upcomingList.map(u=>u.amount), backgroundColor:'#1b4b43' }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false},
+      tooltip:{callbacks:{label: ctx => fmt(ctx.raw)}}},
       scales:{ x:{ ticks:{font:{size:10}, maxRotation:45, minRotation:45} }, y:{ ticks:{ callback:v=>(v/1000)+'K' } } } }
   });
+  if (upcomingList.length){
+    const totalUpcoming = upcomingList.reduce((s,u)=>s+u.amount,0);
+    document.getElementById('upcoming-desc').textContent =
+      `${upcomingList[0].month} – ${upcomingList[upcomingList.length-1].month}, toplam ${fmt(totalUpcoming)} kayıtlı taksit`;
+  }
 }
 
 document.getElementById('edit-btn').addEventListener('click', ()=>{
