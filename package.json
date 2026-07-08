@@ -1,0 +1,10 @@
+{
+  "name": "financeos",
+  "private": true,
+  "dependencies": {
+    "@netlify/blobs": "^10.7.9"
+  },
+  "devDependencies": {
+    "@netlify/functions": "^5.3.0"
+  }
+}

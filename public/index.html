@@ -34,9 +34,9 @@
   #status-banner{display:none;background:var(--coral-soft);color:var(--coral);border:1px solid var(--coral);border-radius:10px;padding:10px 16px;font-size:13px;margin-bottom:18px;}
 
   .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
-  .kpi{background:var(--card);border-radius:var(--radius);padding:20px 22px;box-shadow:0 1px 2px rgba(19,36,32,.05);border:1px solid var(--line);}
+  .kpi{background:var(--card);border-radius:var(--radius);padding:20px 22px;box-shadow:0 1px 2px rgba(19,36,32,.05);border:1px solid var(--line);min-width:0;}
   .kpi .label{font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-soft);margin-bottom:8px;font-weight:600;}
-  .kpi .value{font-family:'Fraunces',serif;font-size:26px;font-weight:600;color:var(--teal-900);}
+  .kpi .value{font-family:'Fraunces',serif;font-size:clamp(19px,4.2vw,26px);font-weight:600;color:var(--teal-900);white-space:nowrap;}
   .kpi .sub{font-size:12.5px;margin-top:6px;color:var(--text-soft);}
   .kpi.warn .value{color:var(--coral);} .kpi.ok .value{color:var(--green-ok);} .kpi.gold .value{color:var(--gold);}
 
@@ -107,6 +107,7 @@
   table.heatmap td.heat-empty{color:var(--text-soft);}
 
   @media(max-width:900px){ .kpi-row{grid-template-columns:repeat(2,1fr);} .grid2{grid-template-columns:1fr;} .grid2.even{grid-template-columns:1fr;} }
+  @media(max-width:520px){ .kpi-row{grid-template-columns:1fr;} }
 </style>
 </head>
 <body>
@@ -280,8 +281,9 @@
 </div>
 
 <script>
-const DATA_URL = './data.json';
+const API_URL = '/api/data';
 const LOCAL_KEY = 'financial-dashboard-draft-v1';
+const TOKEN_KEY = 'financial-dashboard-token';
 const CAT_COLORS = ['#123a33','#1b4b43','#3f7a5e','#b9902f','#d9b25c','#b5453c','#8a9b95','#5c6b66','#7a6a9e','#4f7fa3'];
 const OTHER_COLOR = '#c3c2b7';
 
@@ -289,6 +291,7 @@ let DATA = null;       // full loaded json (meta + snapshot + history)
 let state = null;      // = DATA.snapshot (editable)
 let editMode = false;
 let usingFallback = false;
+let usingApi = false;  // true once /api/data (Netlify function + Blobs) is confirmed reachable
 let fileHandle = null; // FileSystemFileHandle for data.json, once connected
 let bankChart, cashChart, historyChart, categoryChart, categoryDonut, upcomingChart, utilChart, avlChart, bankSpendChart, monthlyCategoryChart;
 
@@ -321,15 +324,27 @@ function idbSet(key, val){
   });
 }
 
-function updateSaveStatus(){
+function updateSaveStatus(apiOk){
   const el = document.getElementById('save-status');
-  if (fileHandle) {
+  const connectBtn = document.getElementById('connect-btn');
+  if (usingApi && apiOk !== false) {
+    el.textContent = '● Sunucuya bağlı — değişiklikler otomatik kaydediliyor';
+    el.style.color = 'var(--green-ok)';
+    connectBtn.style.display = 'none';
+  } else if (usingApi && apiOk === false) {
+    el.textContent = 'Sunucuya kaydedilemedi (bağlantı sorunu) — değişiklikler bu tarayıcıda tutuluyor, bağlantı gelince tekrar denenecek';
+    el.style.color = 'var(--coral)';
+    connectBtn.style.display = 'none';
+  } else if (fileHandle) {
+    connectBtn.style.display = '';
     el.textContent = '● data.json\'a bağlı — değişiklikler otomatik kaydediliyor';
     el.style.color = 'var(--green-ok)';
   } else if (FS_SUPPORTED) {
+    connectBtn.style.display = '';
     el.textContent = 'data.json\'a bağlı değil — "data.json\'a Bağlan" ile düzenlemeleri doğrudan dosyaya kaydedin';
     el.style.color = 'var(--text-soft)';
   } else {
+    connectBtn.style.display = '';
     el.textContent = 'Bu tarayıcı doğrudan dosya kaydetmeyi desteklemiyor (Chrome/Edge deneyin) — değişiklikler yalnızca "JSON İndir" ile kaydedilir';
     el.style.color = 'var(--text-soft)';
   }
@@ -385,6 +400,16 @@ async function writeToFile(obj){
 const fmt = n => Number(n).toLocaleString('tr-TR', {maximumFractionDigits:2}) + ' TL';
 const fmtNum = n => Number(n).toLocaleString('tr-TR', {maximumFractionDigits:2});
 
+function getToken(){ try { return localStorage.getItem(TOKEN_KEY) || ''; } catch(e){ return ''; } }
+function setToken(t){ try { localStorage.setItem(TOKEN_KEY, t); } catch(e){} }
+function clearToken(){ try { localStorage.removeItem(TOKEN_KEY); } catch(e){} }
+function authHeaders(){ const t = getToken(); return t ? { 'Authorization': 'Bearer ' + t } : {}; }
+
+async function fetchWithToken(url, options){
+  const opts = Object.assign({}, options, { headers: Object.assign({}, options && options.headers, authHeaders()) });
+  return fetch(url, opts);
+}
+
 const FALLBACK_SNAPSHOT = {
   income: 140000, fixedCost: 85000, goldGrams: 60, goldPrice: 6200,
   debts: [
@@ -398,29 +423,60 @@ const FALLBACK_SNAPSHOT = {
   roadmapChecks: [false,false,false,false,false]
 };
 
-async function loadData() {
+async function tryLoadFromApi(){
   try {
-    const res = await fetch(DATA_URL, {cache:'no-store'});
-    if (!res.ok) throw new Error('data.json bulunamadı');
+    const res = await fetchWithToken(API_URL, {cache:'no-store'});
+    if (res.status === 401) { clearToken(); return false; }
+    if (!res.ok) return false;
     DATA = await res.json();
     usingFallback = false;
-  } catch (e) {
-    showBanner('data.json okunamadı (dosya:// olarak mı açtınız? GitHub Pages veya bir local server ile açmayı deneyin). Şimdilik örnek veriler gösteriliyor.');
+    usingApi = true;
+    return true;
+  } catch(e) {
+    return false;
+  }
+}
+
+async function loadData() {
+  usingApi = false;
+
+  if (getToken()) await tryLoadFromApi();
+
+  if (!usingApi) {
+    const entered = window.prompt('Bu finansal panoya erişmek için parolayı girin:');
+    if (entered) {
+      setToken(entered.trim());
+      const ok = await tryLoadFromApi();
+      if (!ok) showBanner('Parola yanlış görünüyor ya da sunucuya ulaşılamadı. Sayfayı yenileyip tekrar deneyin.');
+    }
+  }
+
+  if (!usingApi) {
     DATA = { meta:{generated:'-'}, snapshot: JSON.parse(JSON.stringify(FALLBACK_SNAPSHOT)), history:null };
     usingFallback = true;
   }
-  // apply local draft overrides on top, if any
+
+  let hadLocalDraft = false;
   try {
     const draft = localStorage.getItem(LOCAL_KEY);
     if (draft) {
-      const parsed = JSON.parse(draft);
-      DATA.snapshot = Object.assign({}, DATA.snapshot, parsed);
-      showBanner('Bu tarayıcıda kaydedilmiş yerel bir taslak yüklendi. Kalıcı hale getirmek için "data.json\'a Bağlan" ile dosyaya bağlanın ya da "JSON İndir" ile indirip GitHub\'a push\'layın.', true);
+      DATA.snapshot = Object.assign({}, DATA.snapshot, JSON.parse(draft));
+      hadLocalDraft = true;
     }
   } catch(e){}
+
   state = DATA.snapshot;
   await tryRestoreFileHandle();
-  render();
+
+  if (hadLocalDraft && usingApi) {
+    await saveDraft(); // push a previously-queued offline edit up to the server, then clear it
+  } else {
+    if (hadLocalDraft) {
+      showBanner('Bu tarayıcıda kaydedilmiş yerel bir taslak yüklendi. Kalıcı hale getirmek için "data.json\'a Bağlan" ile dosyaya bağlanın ya da "JSON İndir" ile indirip GitHub\'a push\'layın.', true);
+    }
+    updateSaveStatus();
+    render();
+  }
 }
 
 function showBanner(msg, isInfo){
@@ -432,14 +488,25 @@ function showBanner(msg, isInfo){
 
 async function saveDraft(){
   const out = { meta: Object.assign({}, DATA.meta, {generated: new Date().toISOString().slice(0,10)}), snapshot: state, history: DATA.history };
-  const wrote = await writeToFile(out);
-  if (wrote) {
+
+  let apiOk = null;
+  if (usingApi) {
+    try {
+      const res = await fetchWithToken(API_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(out) });
+      if (res.status === 401) { clearToken(); usingApi = false; }
+      apiOk = res.ok;
+    } catch(e) { apiOk = false; }
+  }
+
+  const wroteFile = await writeToFile(out);
+
+  if (apiOk || wroteFile) {
     DATA.meta = out.meta;
     try { localStorage.removeItem(LOCAL_KEY); } catch(e){}
   } else {
     try { localStorage.setItem(LOCAL_KEY, JSON.stringify(state)); } catch(e){}
   }
-  updateSaveStatus();
+  updateSaveStatus(apiOk);
   render();
 }
 
