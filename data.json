@@ -10,10 +10,24 @@
     "goldPrice": 6200,
     "financialFreedomGoal": 500,
     "financialFreedomMilestones": [
+      50,
+      75,
       100,
+      125,
       150,
+      175,
       200,
+      225,
+      250,
+      275,
       300,
+      325,
+      350,
+      375,
+      400,
+      425,
+      450,
+      475,
       500
     ],
     "portfolioHistory": [
@@ -43,11 +57,7 @@
       },
       {
         "month": "July 2026",
-        "value": 95
-      },
-      {
-        "month": "August 2026",
-        "value": 100
+        "value": 60
       }
     ],
     "debts": [
@@ -96,11 +106,11 @@
     "family": [
       {
         "name": "Anne",
-        "amount": 40000
+        "amount": 37000
       },
       {
         "name": "Abi",
-        "amount": 26000
+        "amount": 25618.11
       }
     ],
     "roadmapChecks": [
