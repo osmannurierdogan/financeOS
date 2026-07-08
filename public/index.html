@@ -108,6 +108,38 @@
 
   @media(max-width:900px){ .kpi-row{grid-template-columns:repeat(2,1fr);} .grid2{grid-template-columns:1fr;} .grid2.even{grid-template-columns:1fr;} }
   @media(max-width:520px){ .kpi-row{grid-template-columns:1fr;} }
+
+  .kpi-row.five{grid-template-columns:repeat(5,1fr);}
+  @media(max-width:1024px){ .kpi-row.five{grid-template-columns:repeat(3,1fr);} }
+  @media(max-width:768px){ .kpi-row.five{grid-template-columns:repeat(2,1fr);} }
+  @media(max-width:520px){ .kpi-row.five{grid-template-columns:1fr;} }
+
+  .financial-freedom-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:24px;}
+  @media(max-width:900px){ .financial-freedom-grid{grid-template-columns:1fr;} }
+
+  .ff-progress-box { margin-bottom: 20px; }
+  .ff-percentage-large { font-family:'Fraunces',serif; font-size:42px; font-weight:700; color:var(--gold); line-height:1.2; margin-bottom:4px; }
+  .ff-progress-label { font-size: 13px; color:var(--text-soft); margin-bottom:8px; }
+  .ff-progress-bar-container { width:100%; height:12px; background:var(--teal-100); border-radius:99px; overflow:hidden; margin-bottom:8px; position:relative; }
+  .ff-progress-bar-fill { height:100%; background:var(--gold); border-radius:99px; transition: width 0.4s ease; }
+
+  .ff-milestones { margin-top:20px; }
+  .ff-milestone-item { display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--line); font-size:13.5px; }
+  .ff-milestone-item:last-child { border-bottom:none; }
+  .ff-milestone-item .status { font-weight:bold; font-size:16px; width:20px; text-align:center; }
+  .ff-milestone-item.reached { color:var(--teal-900); font-weight:500; }
+  .ff-milestone-item.reached .status { color:var(--green-ok); }
+  .ff-milestone-item.pending { color:var(--text-soft); }
+  .ff-milestone-item.pending .status { color:var(--text-soft); }
+
+  .ff-goals { display:flex; justify-content:space-between; margin-top:16px; padding:12px; background:var(--cream); border-radius:10px; font-size:13px; }
+  .ff-goals .val { font-family:'Fraunces',serif; font-size:16px; font-weight:600; color:var(--teal-900); margin-top:3px; }
+
+  .ff-motivational { margin-top:16px; padding:12px 14px; background:var(--gold-soft); border-left:4px solid var(--gold); border-radius:4px; font-size:13px; color:#5c4a12; font-style:italic; }
+
+  .kpi-mini-progress { margin-top:8px; }
+  .kpi-mini-bar { width:100%; height:4px; background:var(--teal-100); border-radius:99px; overflow:hidden; }
+  .kpi-mini-fill { height:100%; background:var(--gold); }
 </style>
 </head>
 <body>
@@ -129,11 +161,20 @@
 
   <div id="status-banner"></div>
 
-  <div class="kpi-row">
+  <div class="kpi-row five">
     <div class="kpi warn"><div class="label">Toplam Borç</div><div class="value" id="kpi-total-debt">–</div><div class="sub">Kart + aile borçları</div></div>
     <div class="kpi gold"><div class="label">Altın Birikimi</div><div class="value" id="kpi-gold-value">–</div><div class="sub" id="kpi-gold-sub">–</div></div>
     <div class="kpi ok"><div class="label">Net Durum</div><div class="value" id="kpi-net">–</div><div class="sub">Altın − toplam borç</div></div>
     <div class="kpi"><div class="label">Bu Ay Kalan Nakit</div><div class="value" id="kpi-cash-left">–</div><div class="sub">Gelir − sabit giderler</div></div>
+    <div class="kpi gold" style="cursor: pointer;" onclick="document.getElementById('financial-freedom-panel').scrollIntoView({behavior:'smooth'})">
+      <div class="label">Financial Freedom</div>
+      <div class="value" id="kpi-ff-value">–</div>
+      <div class="sub" id="kpi-ff-sub">–</div>
+      <div class="kpi-mini-progress">
+        <div class="kpi-mini-bar"><div class="kpi-mini-fill" id="kpi-ff-bar" style="width: 0%;"></div></div>
+      </div>
+      <div style="font-size:10px;color:var(--text-soft);margin-top:6px;line-height:1.2;">Progress toward long-term financial independence.</div>
+    </div>
   </div>
 
   <div class="kpi-row" id="kpi-row-2">
@@ -141,6 +182,72 @@
     <div class="kpi warn"><div class="label">En Yüksek Harcama Ayı</div><div class="value" id="kpi-max-spend">–</div><div class="sub" id="kpi-max-spend-sub">–</div></div>
     <div class="kpi gold"><div class="label">Kalan Planlı Taksit</div><div class="value" id="kpi-upcoming">–</div><div class="sub" id="kpi-upcoming-sub">–</div></div>
     <div class="kpi"><div class="label">Ortalama Kart Kullanımı</div><div class="value" id="kpi-util">–</div><div class="sub">Limitlere oranla</div></div>
+  </div>
+
+  <div class="panel" id="financial-freedom-panel">
+    <h2>Finansal Özgürlük Takibi</h2>
+    <div class="desc">Uzun vadeli varlık oluşturma ve finansal bağımsızlık ilerlemesi.</div>
+    <div class="financial-freedom-grid">
+      <div>
+        <div class="ff-progress-box">
+          <div class="ff-percentage-large" id="ff-percentage-large">–</div>
+          <div class="ff-progress-label">Toplam portföy tamamlanma oranı</div>
+          <div class="ff-progress-bar-container">
+            <div class="ff-progress-bar-fill" id="ff-progress-bar-fill" style="width: 0%;"></div>
+          </div>
+        </div>
+        
+        <h3 style="font-size:13px;font-weight:600;color:var(--teal-900);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.05em;">Milestones</h3>
+        <div id="ff-milestones-list"></div>
+        
+        <div class="ff-goals">
+          <div>
+            <div style="color:var(--text-soft);text-transform:uppercase;font-size:10px;letter-spacing:0.05em;">Next Goal</div>
+            <div class="val" id="ff-next-goal">–</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="color:var(--text-soft);text-transform:uppercase;font-size:10px;letter-spacing:0.05em;">Remaining</div>
+            <div class="val" id="ff-remaining-grams">–</div>
+          </div>
+        </div>
+        
+        <div class="ff-motivational" id="ff-motivational-msg"></div>
+      </div>
+      
+      <div>
+        <h3 style="font-size:13px;font-weight:600;color:var(--teal-900);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.05em;">İlerleme Geçmişi (Yüzde Bazlı)</h3>
+        <div class="chart-box" style="height: 250px;"><canvas id="ffHistoryChart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Edit mode configuration for Financial Freedom -->
+    <div id="ff-edit-section" style="display:none;margin-top:20px;padding-top:20px;border-top:1px solid var(--line);">
+      <h3 style="font-size:13px;font-weight:600;color:var(--teal-900);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.05em;">Finansal Özgürlük Ayarları</h3>
+      
+      <div style="display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <div style="font-size:11px;color:var(--text-soft);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Milestone Seviyeleri (Gram, virgülle ayırın)</div>
+          <input type="text" id="ff-edit-milestones" style="width:100%;padding:6px;border:1px solid var(--line);border-radius:6px;font-size:13px;">
+        </div>
+      </div>
+      
+      <div style="margin-bottom:12px;">
+        <div style="font-size:11px;color:var(--text-soft);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">Portföy Geçmişi</div>
+        <div class="table-scroll" style="max-height:200px;border:1px solid var(--line);border-radius:8px;padding:8px;background:#faf7f0;">
+          <table style="width:100%;font-size:12.5px;">
+            <thead>
+              <tr><th style="padding:4px;text-align:left;">Ay</th><th style="padding:4px;text-align:right;">Değer (gr)</th><th style="padding:4px;width:50px;text-align:center;">Aksiyon</th></tr>
+            </thead>
+            <tbody id="ff-history-edit-table"></tbody>
+          </table>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:8px;align-items:center;flex-wrap:wrap;">
+          <input type="text" id="ff-new-month" placeholder="Örn: Aug 2026" style="width:110px;padding:5px;border:1px solid var(--line);border-radius:6px;font-size:12px;">
+          <input type="number" id="ff-new-value" placeholder="Gram" style="width:70px;padding:5px;border:1px solid var(--line);border-radius:6px;font-size:12px;">
+          <button class="btn" id="ff-add-history-btn" style="padding:4px 10px;font-size:11.5px;margin:0;">Yeni Ay Ekle</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="grid2">
@@ -192,9 +299,10 @@
       <div class="gold-card">
         <div class="gold-visual"></div>
         <div style="flex:1;">
-          <div style="display:flex;gap:16px;margin-bottom:10px;">
+          <div style="display:flex;gap:16px;margin-bottom:10px;flex-wrap:wrap;">
             <div><div style="font-size:11px;color:var(--text-soft);text-transform:uppercase;letter-spacing:.06em;">Gram</div><input class="edit" id="gold-grams" disabled style="width:70px;"></div>
             <div><div style="font-size:11px;color:var(--text-soft);text-transform:uppercase;letter-spacing:.06em;">Gram Fiyatı (TL)</div><input class="edit" id="gold-price" disabled style="width:90px;"></div>
+            <div><div style="font-size:11px;color:var(--text-soft);text-transform:uppercase;letter-spacing:.06em;">Özgürlük Hedefi (gr)</div><input class="edit" id="ff-goal" disabled style="width:70px;"></div>
           </div>
           <div style="font-family:'Fraunces',serif;font-size:22px;color:var(--gold);" id="gold-total"></div>
         </div>
@@ -293,7 +401,7 @@ let editMode = false;
 let usingFallback = false;
 let usingApi = false;  // true once /api/data (Netlify function + Blobs) is confirmed reachable
 let fileHandle = null; // FileSystemFileHandle for data.json, once connected
-let bankChart, cashChart, historyChart, categoryChart, categoryDonut, upcomingChart, utilChart, avlChart, bankSpendChart, monthlyCategoryChart;
+let bankChart, cashChart, historyChart, categoryChart, categoryDonut, upcomingChart, utilChart, avlChart, bankSpendChart, monthlyCategoryChart, ffHistoryChart;
 
 const FS_SUPPORTED = 'showOpenFilePicker' in window;
 const FS_DB = 'financial-dashboard-fs', FS_STORE = 'handles', FS_KEY = 'data-json-handle';
@@ -399,6 +507,19 @@ async function writeToFile(obj){
 
 const fmt = n => Number(n).toLocaleString('tr-TR', {maximumFractionDigits:2}) + ' TL';
 const fmtNum = n => Number(n).toLocaleString('tr-TR', {maximumFractionDigits:2});
+const parseNum = val => {
+  if (val === undefined || val === null || val === '') return 0;
+  let clean = val.toString().trim();
+  if (clean.includes(',') && !clean.includes('.')) {
+    clean = clean.replace(/,/g, '.');
+  } else if (clean.includes('.')) {
+    const parts = clean.split('.');
+    if (parts.length > 2 || (parts.length === 2 && parts[1].length === 3)) {
+      clean = clean.replace(/\./g, '').replace(/,/g, '.');
+    }
+  }
+  return Number(clean) || 0;
+};
 
 function getToken(){ try { return localStorage.getItem(TOKEN_KEY) || ''; } catch(e){ return ''; } }
 function setToken(t){ try { localStorage.setItem(TOKEN_KEY, t); } catch(e){} }
@@ -412,6 +533,25 @@ async function fetchWithToken(url, options){
 
 const FALLBACK_SNAPSHOT = {
   income: 140000, fixedCost: 85000, goldGrams: 60, goldPrice: 6200,
+  financialFreedomGoal: 500,
+  financialFreedomMilestones: [100, 150, 200, 300, 500],
+  portfolioHistory: [
+    {"month": "May 2025", "value": 10},
+    {"month": "June 2025", "value": 12},
+    {"month": "July 2025", "value": 15},
+    {"month": "August 2025", "value": 18},
+    {"month": "September 2025", "value": 20},
+    {"month": "October 2025", "value": 22},
+    {"month": "November 2025", "value": 25},
+    {"month": "December 2025", "value": 30},
+    {"month": "January 2026", "value": 35},
+    {"month": "February 2026", "value": 40},
+    {"month": "March 2026", "value": 42},
+    {"month": "April 2026", "value": 45},
+    {"month": "May 2026", "value": 50},
+    {"month": "June 2026", "value": 55},
+    {"month": "July 2026", "value": 60}
+  ],
   debts: [
     {bank:'Yapı Kredi',debt:233961,limit:750000},{bank:'Akbank',debt:24987,limit:52000},
     {bank:'TOM Bank',debt:22789,limit:100000},{bank:'Garanti BBVA',debt:20325,limit:250000},
@@ -513,6 +653,13 @@ async function saveDraft(){
 function totalCardDebt(){ return state.debts.reduce((s,d)=>s+Number(d.debt||0),0); }
 function totalFamilyDebt(){ return state.family.reduce((s,f)=>s+Number(f.amount||0),0); }
 function goldValue(){ return Number(state.goldGrams||0) * Number(state.goldPrice||0); }
+function getPortfolioProgress() {
+  const goldGrams = Number(state.goldGrams || 0);
+  const portfolioValueInGrams = goldGrams; // Extensible point for future investments
+  const goal = Number(state.financialFreedomGoal || 500);
+  const percentage = goal > 0 ? Math.min(100, (portfolioValueInGrams / goal) * 100) : 0;
+  return { value: portfolioValueInGrams, goal: goal, percentage: percentage };
+}
 
 const ROADMAP = [
   { title:'Faizli 50.000 TL\'yi kapat', tag:'ACİL', type:'urgent',
@@ -542,6 +689,54 @@ function render(){
   document.getElementById('kpi-gold-sub').textContent = fmtNum(state.goldGrams) + ' gr × ' + fmtNum(state.goldPrice) + ' TL';
   document.getElementById('kpi-net').textContent = (net>=0?'+':'') + fmt(net);
   document.getElementById('kpi-cash-left').textContent = fmt(cashLeft);
+
+  // Financial Freedom
+  const ff = getPortfolioProgress();
+  document.getElementById('kpi-ff-value').textContent = ff.percentage.toFixed(0) + '%';
+  document.getElementById('kpi-ff-sub').textContent = fmtNum(ff.value) + ' gr / ' + fmtNum(ff.goal) + ' gr';
+  document.getElementById('kpi-ff-bar').style.width = ff.percentage + '%';
+
+  document.getElementById('ff-percentage-large').textContent = ff.percentage.toFixed(1) + '%';
+  document.getElementById('ff-progress-bar-fill').style.width = ff.percentage + '%';
+
+  const milestones = state.financialFreedomMilestones || [100, 150, 200, 300, 500];
+  const milestonesList = document.getElementById('ff-milestones-list');
+  milestonesList.innerHTML = '';
+  let nextMilestone = null;
+  milestones.forEach(m => {
+    const reached = ff.value >= m;
+    const item = document.createElement('div');
+    item.className = 'ff-milestone-item ' + (reached ? 'reached' : 'pending');
+    item.innerHTML = `<span class="status">${reached ? '✓' : '○'}</span><span>${m} gr</span>`;
+    milestonesList.appendChild(item);
+    if (!reached && nextMilestone === null) {
+      nextMilestone = m;
+    }
+  });
+
+  if (nextMilestone !== null) {
+    document.getElementById('ff-next-goal').textContent = nextMilestone + ' gr';
+    document.getElementById('ff-remaining-grams').textContent = fmtNum(Math.max(0, nextMilestone - ff.value)) + ' gr';
+  } else {
+    document.getElementById('ff-next-goal').textContent = 'Tümü Tamamlandı!';
+    document.getElementById('ff-remaining-grams').textContent = '0 gr';
+  }
+
+  let motMsg = '';
+  if (ff.value < 100) {
+    motMsg = 'Building the foundation (Temel atılıyor).';
+  } else if (ff.value < 150) {
+    motMsg = 'Emergency reserve established (Acil durum rezervi hazır).';
+  } else if (ff.value < 200) {
+    motMsg = 'Strong financial position (Güçlü finansal pozisyon).';
+  } else if (ff.value < 300) {
+    motMsg = 'Core wealth established (Çekirdek servet oluştu).';
+  } else if (ff.value < 500) {
+    motMsg = 'Approaching financial independence (Finansal özgürlüğe yaklaşıldı).';
+  } else {
+    motMsg = 'Financial independence milestone reached (Finansal özgürlük hedefi aşıldı!).';
+  }
+  document.getElementById('ff-motivational-msg').textContent = motMsg;
 
   renderKpiRow2();
 
@@ -573,7 +768,7 @@ function render(){
   });
   tbody.querySelectorAll('input').forEach(inp=>{
     inp.addEventListener('change', e=>{
-      state.debts[Number(e.target.dataset.idx)][e.target.dataset.field] = Number(e.target.value)||0;
+      state.debts[Number(e.target.dataset.idx)][e.target.dataset.field] = parseNum(e.target.value);
       saveDraft();
     });
   });
@@ -590,15 +785,17 @@ function render(){
     btn.addEventListener('click', e=>{
       const idx = Number(e.target.dataset.idx);
       const input = fl.querySelector(`input[data-idx="${idx}"]`);
-      const val = Number(input.value)||0;
+      const val = parseNum(input.value);
       if (val>0){ state.family[idx].amount = Math.max(0, state.family[idx].amount-val); input.value=''; saveDraft(); }
     });
   });
 
   document.getElementById('gold-grams').value = editMode ? state.goldGrams : fmtNum(state.goldGrams);
   document.getElementById('gold-price').value = editMode ? state.goldPrice : fmtNum(state.goldPrice);
+  document.getElementById('ff-goal').value = editMode ? state.financialFreedomGoal : fmtNum(state.financialFreedomGoal);
   document.getElementById('gold-grams').disabled = !editMode;
   document.getElementById('gold-price').disabled = !editMode;
+  document.getElementById('ff-goal').disabled = !editMode;
   document.getElementById('gold-total').textContent = fmt(gVal);
 
   document.getElementById('income').value = editMode ? state.income : fmtNum(state.income);
@@ -608,6 +805,52 @@ function render(){
 
   document.getElementById('footnote').textContent =
     'Bu pano tahmini verilerle çalışır ve finansal/yatırım tavsiyesi yerine geçmez. "history" verileri Notion bütçe takibinizden bir kerelik alınmıştır; yeni bir dışa aktarım yaptığınızda data.json\'daki "history" bölümünü değiştirerek güncelleyebilirsiniz. Kategori kırılımı yalnızca son 3 aylık toplu bir veridir — aya göre kalem kalem bir kırılım için Notion dışa aktarımına işlem bazlı ay+kategori bilgisi eklenmesi gerekir.';
+
+  // Financial Freedom Edit Section
+  const ffEditSec = document.getElementById('ff-edit-section');
+  if (editMode) {
+    ffEditSec.style.display = 'block';
+    
+    // Milestones
+    document.getElementById('ff-edit-milestones').value = (state.financialFreedomMilestones || [100,150,200,300,500]).join(', ');
+    
+    // History Edit Table
+    const ffHistEditTbody = document.getElementById('ff-history-edit-table');
+    ffHistEditTbody.innerHTML = '';
+    const ffHist = state.portfolioHistory || [];
+    ffHist.forEach((h, i) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td style="padding:4px;">${h.month}</td>
+        <td style="padding:4px;text-align:right;">
+          <input type="number" class="edit" data-ff-hist-idx="${i}" value="${h.value}" style="width:70px;text-align:right;">
+        </td>
+        <td style="padding:4px;text-align:center;">
+          <button class="btn ghost" data-ff-delete-idx="${i}" style="padding:2px 8px;font-size:11px;margin:0;border-color:var(--coral);color:var(--coral);">Sil</button>
+        </td>
+      `;
+      ffHistEditTbody.appendChild(tr);
+    });
+    
+    // Bind change listeners to history inputs
+    ffHistEditTbody.querySelectorAll('input').forEach(inp => {
+      inp.addEventListener('change', e => {
+        const idx = Number(e.target.dataset.ffHistIdx);
+        state.portfolioHistory[idx].value = Number(e.target.value) || 0;
+      });
+    });
+    
+    // Bind delete click listeners
+    ffHistEditTbody.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const idx = Number(e.target.dataset.ffDeleteIdx);
+        state.portfolioHistory.splice(idx, 1);
+        render();
+      });
+    });
+  } else {
+    ffEditSec.style.display = 'none';
+  }
 
   renderCharts(cashLeft, cardDebt, famDebt, gVal);
 }
@@ -880,6 +1123,49 @@ function renderCharts(cashLeft, cardDebt, famDebt, gVal){
     document.getElementById('upcoming-desc').textContent =
       `${upcomingList[0].month} – ${upcomingList[upcomingList.length-1].month}, toplam ${fmt(totalUpcoming)} kayıtlı taksit`;
   }
+
+  // Financial Freedom History Chart
+  const ffHistory = state.portfolioHistory || [];
+  const ffGoal = Number(state.financialFreedomGoal || 500);
+  const ffLabels = ffHistory.map(h => h.month);
+  const ffData = ffHistory.map(h => ffGoal > 0 ? (h.value / ffGoal) * 100 : 0);
+
+  if (ffHistoryChart) ffHistoryChart.destroy();
+  ffHistoryChart = new Chart(document.getElementById('ffHistoryChart').getContext('2d'), {
+    type: 'line',
+    data: {
+      labels: ffLabels,
+      datasets: [{
+        label: 'İlerleme Yüzdesi',
+        data: ffData,
+        borderColor: '#b9902f',
+        backgroundColor: 'rgba(185,144,47,.08)',
+        fill: true,
+        tension: 0.25,
+        pointRadius: 4,
+        pointBackgroundColor: '#b9902f'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => {
+              const valInGrams = (ctx.raw / 100) * ffGoal;
+              return '%' + ctx.raw.toFixed(1) + ' (' + fmtNum(valInGrams) + ' gr)';
+            }
+          }
+        }
+      },
+      scales: {
+        x: { ticks: { font: { size: 9 }, maxRotation: 45, minRotation: 45 } },
+        y: { min: 0, max: 100, ticks: { callback: v => '%' + v } }
+      }
+    }
+  });
 }
 
 document.getElementById('edit-btn').addEventListener('click', async ()=>{
@@ -887,15 +1173,43 @@ document.getElementById('edit-btn').addEventListener('click', async ()=>{
   document.getElementById('edit-btn').textContent = editMode ? 'Düzenlemeyi Kapat ve Kaydet' : 'Düzenlemeyi Aç';
   document.getElementById('edit-btn').classList.toggle('active', editMode);
   if (!editMode){
-    state.income = Number(document.getElementById('income').value)||0;
-    state.fixedCost = Number(document.getElementById('fixed-cost').value)||0;
-    state.goldGrams = Number(document.getElementById('gold-grams').value)||0;
-    state.goldPrice = Number(document.getElementById('gold-price').value)||0;
+    state.income = parseNum(document.getElementById('income').value);
+    state.fixedCost = parseNum(document.getElementById('fixed-cost').value);
+    state.goldGrams = parseNum(document.getElementById('gold-grams').value);
+    state.goldPrice = parseNum(document.getElementById('gold-price').value);
+    state.financialFreedomGoal = parseNum(document.getElementById('ff-goal').value);
+    
+    // Parse milestones
+    const msInput = document.getElementById('ff-edit-milestones').value;
+    state.financialFreedomMilestones = msInput.split(',')
+      .map(x => parseNum(x.trim()))
+      .filter(x => x > 0)
+      .sort((a,b) => a-b);
+    if (state.financialFreedomMilestones.length === 0) {
+      state.financialFreedomMilestones = [100, 150, 200, 300, 500];
+    }
+    
     await saveDraft();
   } else { render(); }
 });
 
 document.getElementById('connect-btn').addEventListener('click', connectFileHandle);
+
+document.getElementById('ff-add-history-btn').addEventListener('click', () => {
+  const monthInput = document.getElementById('ff-new-month');
+  const valInput = document.getElementById('ff-new-value');
+  const month = monthInput.value.trim();
+  const val = Number(valInput.value) || 0;
+  if (month && val >= 0) {
+    if (!state.portfolioHistory) state.portfolioHistory = [];
+    state.portfolioHistory.push({ month: month, value: val });
+    monthInput.value = '';
+    valInput.value = '';
+    render();
+  } else {
+    alert('Lütfen geçerli bir ay adı (Örn: Aug 2026) ve gram değeri girin.');
+  }
+});
 
 document.getElementById('download-btn').addEventListener('click', ()=>{
   const out = { meta: Object.assign({}, DATA.meta, {generated: new Date().toISOString().slice(0,10)}), snapshot: state, history: DATA.history };
