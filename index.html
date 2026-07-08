@@ -156,10 +156,12 @@
   <div class="panel">
     <h2>Kredi Kartı Detayı</h2>
     <div class="desc">Tutarlar güncellendikçe düzenleme modunu açıp değiştirebilirsiniz.</div>
-    <table>
-      <thead><tr><th>Banka</th><th>Borç (TL)</th><th>Limit (TL)</th><th style="width:140px;">Kullanım</th></tr></thead>
-      <tbody id="debt-table"></tbody>
-    </table>
+    <div class="table-scroll">
+      <table style="min-width:560px;">
+        <thead><tr><th>Banka</th><th>Borç (TL)</th><th>Limit (TL)</th><th style="width:140px;">Kullanım</th></tr></thead>
+        <tbody id="debt-table"></tbody>
+      </table>
+    </div>
   </div>
 
   <div class="grid2 even">
@@ -394,8 +396,8 @@ function render(){
     const pct = d.limit>0 ? Math.min(100,(d.debt/d.limit)*100) : 0;
     const tr = document.createElement('tr');
     tr.innerHTML = `<td>${d.bank}</td>
-      <td><input class="edit" data-field="debt" data-idx="${i}" value="${d.debt}" ${editMode?'':'disabled'}></td>
-      <td><input class="edit" data-field="limit" data-idx="${i}" value="${d.limit}" ${editMode?'':'disabled'}></td>
+      <td><input class="edit" data-field="debt" data-idx="${i}" value="${editMode ? d.debt : Number(d.debt).toLocaleString('tr-TR')}" ${editMode?'':'disabled'}></td>
+      <td><input class="edit" data-field="limit" data-idx="${i}" value="${editMode ? d.limit : Number(d.limit).toLocaleString('tr-TR')}" ${editMode?'':'disabled'}></td>
       <td><div class="bar-bg"><div class="bar-fill" style="width:${pct}%;"></div></div>
       <div style="font-size:11px;color:var(--text-soft);margin-top:3px;">%${pct.toFixed(0)}</div></td>`;
     tbody.appendChild(tr);
