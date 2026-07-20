@@ -58,7 +58,7 @@
       },
       {
         "name": "Abi",
-        "amount": 26000
+        "amount": 13381.89
       }
     ],
     "roadmapChecks": [
@@ -67,6 +67,14 @@
       false,
       false,
       false
+    ],
+    "financialFreedomGoal": 500,
+    "financialFreedomMilestones": [
+      100,
+      150,
+      200,
+      300,
+      500
     ]
   },
   "history": {
@@ -1902,5 +1910,12 @@
       }
     ],
     "current_month": "July 2026"
-  }
+  },
+  "freedomHistory": [
+    {
+      "month": "July 2026",
+      "grams": 60,
+      "percentage": 12.0
+    }
+  ]
 }

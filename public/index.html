@@ -43,6 +43,22 @@
   .section-label{font-size:11.5px;text-transform:uppercase;letter-spacing:.12em;color:var(--gold);font-weight:700;margin:32px 0 10px;}
   .section-label:first-of-type{margin-top:0;}
 
+  .freedom-panel{background:linear-gradient(160deg,#ffffff,var(--gold-soft) 220%);}
+  .freedom-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;margin-bottom:4px;}
+  .freedom-value{font-family:'Fraunces',serif;font-size:44px;font-weight:600;color:var(--gold);line-height:1;}
+  .freedom-sub{font-size:13.5px;color:var(--text-soft);margin-top:6px;}
+  .freedom-goal{text-align:right;}
+  .freedom-goal .mini-label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-soft);margin-bottom:4px;}
+  .freedom-bar-bg{width:100%;height:14px;background:var(--teal-100);border-radius:99px;overflow:hidden;margin:18px 0 20px;}
+  .freedom-bar-fill{height:100%;background:linear-gradient(90deg,var(--gold),#e3c063);border-radius:99px;transition:width .4s ease;}
+  .freedom-milestones{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+  .milestone{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid var(--line);color:var(--text-soft);background:#fff;}
+  .milestone .mark{font-weight:700;}
+  .milestone.done{border-color:var(--green-ok);color:var(--green-ok);background:var(--green-soft);}
+  .freedom-next{display:flex;gap:32px;flex-wrap:wrap;margin-bottom:16px;}
+  .freedom-next .label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-soft);margin-bottom:4px;}
+  .freedom-next .val{font-family:'Fraunces',serif;font-size:21px;color:var(--teal-900);}
+
   .grid2{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;margin-bottom:16px;}
   .grid2.even{grid-template-columns:1fr 1fr;}
   .panel{background:var(--card);border-radius:var(--radius);padding:22px 24px;box-shadow:0 1px 2px rgba(19,36,32,.05);border:1px solid var(--line);margin-bottom:16px;}
@@ -141,6 +157,35 @@
     <div class="kpi warn"><div class="label">En Yüksek Harcama Ayı</div><div class="value" id="kpi-max-spend">–</div><div class="sub" id="kpi-max-spend-sub">–</div></div>
     <div class="kpi gold"><div class="label">Kalan Planlı Taksit</div><div class="value" id="kpi-upcoming">–</div><div class="sub" id="kpi-upcoming-sub">–</div></div>
     <div class="kpi"><div class="label">Ortalama Kart Kullanımı</div><div class="value" id="kpi-util">–</div><div class="sub">Limitlere oranla</div></div>
+  </div>
+
+  <div class="panel freedom-panel">
+    <div class="freedom-top">
+      <div>
+        <h2>Finansal Özgürlük</h2>
+        <div class="freedom-value" id="freedom-pct">–</div>
+        <div class="freedom-sub" id="freedom-sub">–</div>
+      </div>
+      <div class="freedom-goal">
+        <div class="mini-label">Hedef (gram)</div>
+        <input class="edit" id="freedom-goal" disabled style="width:80px;">
+      </div>
+    </div>
+    <div class="desc">TL bazlı servetten bağımsız — uzun vadeli varlık oluşturma hedefinize göre ilerleme.</div>
+
+    <div class="freedom-bar-bg"><div class="freedom-bar-fill" id="freedom-bar"></div></div>
+
+    <div class="freedom-milestones" id="freedom-milestones"></div>
+
+    <div class="freedom-next" id="freedom-next"></div>
+
+    <div class="callout soft" id="freedom-message"></div>
+  </div>
+
+  <div class="panel" id="freedom-history-panel">
+    <h2>Finansal Özgürlük Geçmişi</h2>
+    <div class="desc">Her kayıt attığınızda buraya bir nokta eklenir — zamanla gerçek ilerlemenizi gösterir.</div>
+    <div class="chart-box"><canvas id="freedomHistoryChart"></canvas></div>
   </div>
 
   <div class="grid2">
@@ -293,7 +338,7 @@ let editMode = false;
 let usingFallback = false;
 let usingApi = false;  // true once /api/data (Netlify function + Blobs) is confirmed reachable
 let fileHandle = null; // FileSystemFileHandle for data.json, once connected
-let bankChart, cashChart, historyChart, categoryChart, categoryDonut, upcomingChart, utilChart, avlChart, bankSpendChart, monthlyCategoryChart;
+let bankChart, cashChart, historyChart, categoryChart, categoryDonut, upcomingChart, utilChart, avlChart, bankSpendChart, monthlyCategoryChart, freedomHistoryChart;
 
 const FS_SUPPORTED = 'showOpenFilePicker' in window;
 const FS_DB = 'financial-dashboard-fs', FS_STORE = 'handles', FS_KEY = 'data-json-handle';
@@ -486,8 +531,17 @@ function showBanner(msg, isInfo){
   if (isInfo){ el.style.background = 'var(--gold-soft)'; el.style.color = '#5c4a12'; el.style.borderColor='var(--gold)'; }
 }
 
+function updateFreedomHistory(){
+  if (!Array.isArray(DATA.freedomHistory)) DATA.freedomHistory = [];
+  const month = currentMonthLabel();
+  const entry = { month, grams: portfolioValueInGrams(), percentage: Math.round(freedomPercentage()*10)/10 };
+  const idx = DATA.freedomHistory.findIndex(h=>h.month===month);
+  if (idx>=0) DATA.freedomHistory[idx] = entry; else DATA.freedomHistory.push(entry);
+}
+
 async function saveDraft(){
-  const out = { meta: Object.assign({}, DATA.meta, {generated: new Date().toISOString().slice(0,10)}), snapshot: state, history: DATA.history };
+  updateFreedomHistory();
+  const out = { meta: Object.assign({}, DATA.meta, {generated: new Date().toISOString().slice(0,10)}), snapshot: state, history: DATA.history, freedomHistory: DATA.freedomHistory };
 
   let apiOk = null;
   if (usingApi) {
@@ -513,6 +567,74 @@ async function saveDraft(){
 function totalCardDebt(){ return state.debts.reduce((s,d)=>s+Number(d.debt||0),0); }
 function totalFamilyDebt(){ return state.family.reduce((s,f)=>s+Number(f.amount||0),0); }
 function goldValue(){ return Number(state.goldGrams||0) * Number(state.goldPrice||0); }
+
+// Extensible: today "the portfolio" is just gold. As other asset classes are
+// added to the snapshot (ETFs, stocks, cash investments, crypto), convert
+// each to a gold-gram-equivalent and add it here — every consumer of this
+// function (the Financial Freedom card, its history log) picks it up for free.
+function portfolioValueInGrams(){
+  return Number(state.goldGrams||0)
+    + Number(state.etfsInGrams||0)
+    + Number(state.stocksInGrams||0)
+    + Number(state.cashInvestmentsInGrams||0)
+    + Number(state.cryptoInGrams||0);
+}
+function freedomGoal(){ return Number(state.financialFreedomGoal||500); }
+function freedomMilestones(){
+  const ms = state.financialFreedomMilestones;
+  return (Array.isArray(ms) && ms.length ? ms.slice() : [100,150,200,300,500]).sort((a,b)=>a-b);
+}
+function freedomPercentage(){
+  const goal = freedomGoal();
+  return goal>0 ? Math.min((portfolioValueInGrams()/goal)*100, 100) : 0;
+}
+function freedomMessage(grams){
+  if (grams < 100) return 'Temel oluşturuluyor.';
+  if (grams < 150) return 'Acil durum rezervi oluşturuldu.';
+  if (grams < 200) return 'Güçlü bir finansal pozisyon.';
+  if (grams < 300) return 'Temel servet oluşturuldu.';
+  if (grams < 500) return 'Finansal özgürlüğe yaklaşılıyor.';
+  return 'Finansal özgürlük kilometre taşına ulaşıldı.';
+}
+function currentMonthLabel(){
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const d = new Date();
+  return MONTHS[d.getMonth()] + ' ' + d.getFullYear();
+}
+
+function renderFreedom(){
+  const grams = portfolioValueInGrams();
+  const goal = freedomGoal();
+  const pct = freedomPercentage();
+
+  document.getElementById('freedom-pct').textContent = '%' + pct.toFixed(0);
+  document.getElementById('freedom-sub').textContent = fmtNum(grams) + ' gr / ' + fmtNum(goal) + ' gr';
+  document.getElementById('freedom-bar').style.width = pct + '%';
+  document.getElementById('freedom-goal').value = editMode ? goal : fmtNum(goal);
+  document.getElementById('freedom-goal').disabled = !editMode;
+
+  const milestones = freedomMilestones();
+  const ms = document.getElementById('freedom-milestones'); ms.innerHTML = '';
+  milestones.forEach(m=>{
+    const done = grams >= m;
+    const el = document.createElement('div');
+    el.className = 'milestone' + (done ? ' done' : '');
+    el.innerHTML = `<span class="mark">${done ? '✓' : '○'}</span> ${fmtNum(m)} gr`;
+    ms.appendChild(el);
+  });
+
+  const next = milestones.find(m=>m > grams);
+  const nextEl = document.getElementById('freedom-next');
+  if (next !== undefined) {
+    nextEl.innerHTML =
+      `<div><div class="label">Sonraki Hedef</div><div class="val">${fmtNum(next)} gr</div></div>
+       <div><div class="label">Kalan</div><div class="val">${fmtNum(Math.max(0,next-grams))} gr</div></div>`;
+  } else {
+    nextEl.innerHTML = `<div><div class="label">Durum</div><div class="val">Tüm kilometre taşları tamamlandı 🎉</div></div>`;
+  }
+
+  document.getElementById('freedom-message').textContent = freedomMessage(grams);
+}
 
 const ROADMAP = [
   { title:'Faizli 50.000 TL\'yi kapat', tag:'ACİL', type:'urgent',
@@ -544,6 +666,7 @@ function render(){
   document.getElementById('kpi-cash-left').textContent = fmt(cashLeft);
 
   renderKpiRow2();
+  renderFreedom();
 
   const rm = document.getElementById('roadmap'); rm.innerHTML = '';
   ROADMAP.forEach((step,i)=>{
@@ -704,6 +827,22 @@ function renderMonthlyCategory(hist, monthly, boundaryIdx){
 }
 
 function renderCharts(cashLeft, cardDebt, famDebt, gVal){
+  const freedomHist = Array.isArray(DATA.freedomHistory) ? DATA.freedomHistory : [];
+  if (freedomHistoryChart) freedomHistoryChart.destroy();
+  if (freedomHist.length) {
+    document.getElementById('freedom-history-panel').style.display = '';
+    freedomHistoryChart = new Chart(document.getElementById('freedomHistoryChart').getContext('2d'), {
+      type:'line',
+      data:{ labels: freedomHist.map(h=>h.month), datasets:[{ label:'Finansal Özgürlük', data: freedomHist.map(h=>h.percentage),
+        borderColor:'#b9902f', backgroundColor:'rgba(185,144,47,.12)', fill:true, tension:.25, pointRadius:4 }] },
+      options:{ responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{display:false}, tooltip:{callbacks:{label: ctx => '%'+ctx.raw+' ('+fmtNum(freedomHist[ctx.dataIndex].grams)+' gr)'}} },
+        scales:{ y:{ min:0, max:100, ticks:{ callback:v=>'%'+v } } } }
+    });
+  } else {
+    document.getElementById('freedom-history-panel').style.display = 'none';
+  }
+
   const bankData = state.debts.filter(d=>d.debt>0);
   if (bankChart) bankChart.destroy();
   bankChart = new Chart(document.getElementById('bankChart').getContext('2d'), {
@@ -891,6 +1030,7 @@ document.getElementById('edit-btn').addEventListener('click', async ()=>{
     state.fixedCost = Number(document.getElementById('fixed-cost').value)||0;
     state.goldGrams = Number(document.getElementById('gold-grams').value)||0;
     state.goldPrice = Number(document.getElementById('gold-price').value)||0;
+    state.financialFreedomGoal = Number(document.getElementById('freedom-goal').value)||500;
     await saveDraft();
   } else { render(); }
 });
