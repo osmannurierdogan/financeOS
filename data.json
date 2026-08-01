@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated": "2026-07-08",
+    "generated": "2026-08-01",
     "note": "Bu dosya dashboard.html tarafından okunur. 'history' bölümü scripts/build_history.py ile Notion 'Monthly Budget' CSV dışa aktarımından otomatik üretilir (python3 scripts/build_history.py export.csv). 'snapshot' alanını elle güncelleyip GitHub'a push'layarak tüm cihazlarda güncel veriyi görebilirsiniz."
   },
   "snapshot": {
@@ -137,7 +137,7 @@
       },
       {
         "month": "July 2025",
-        "expense": 86389.67
+        "expense": 83389.67
       },
       {
         "month": "August 2025",
@@ -185,203 +185,211 @@
       },
       {
         "month": "July 2026",
-        "expense": 51296.43
+        "expense": 198612.21
       },
       {
         "month": "August 2026",
-        "expense": 51435.13
+        "expense": 61918.64
       },
       {
         "month": "September 2026",
-        "expense": 45803.71
+        "expense": 56287.22
       },
       {
         "month": "October 2026",
-        "expense": 45803.71
+        "expense": 50806.73
       },
       {
         "month": "November 2026",
-        "expense": 16426.21
+        "expense": 21429.23
       },
       {
         "month": "December 2026",
-        "expense": 7899.08
+        "expense": 10341.13
       },
       {
         "month": "January 2027",
-        "expense": 3224.48
+        "expense": 4474.81
       },
       {
         "month": "February 2027",
-        "expense": 3224.48
+        "expense": 4474.81
+      },
+      {
+        "month": "March 2027",
+        "expense": 1250.33
       }
     ],
     "recent_category_breakdown": [
       {
         "group": "Health",
-        "amount": 160517.11
+        "amount": 157587.79
       },
       {
         "group": "Market",
-        "amount": 90138.16
-      },
-      {
-        "group": "Utility Bill",
-        "amount": 45982.1
+        "amount": 77097.26
       },
       {
         "group": "Debt Payment",
-        "amount": 40516.68
-      },
-      {
-        "group": "Dinner",
-        "amount": 31865
+        "amount": 49925.56
       },
       {
         "group": "Gas & Car",
-        "amount": 29040.95
+        "amount": 39346.89
+      },
+      {
+        "group": "Dinner",
+        "amount": 37060.0
       },
       {
         "group": "Clothes",
-        "amount": 28347.37
+        "amount": 32477.46
       },
       {
-        "group": "Furniture",
-        "amount": 28089.98
+        "group": "Utility Bill",
+        "amount": 30328.17
       },
       {
         "group": "Online Commerce",
-        "amount": 19954.83
+        "amount": 20592.64
       },
       {
         "group": "Apps",
-        "amount": 17753.65
+        "amount": 18503.67
       },
       {
-        "group": "Travel",
-        "amount": 16718
-      },
-      {
-        "group": "Entertainment",
-        "amount": 14333.35
-      },
-      {
-        "group": "Accessories",
-        "amount": 14179.15
-      },
-      {
-        "group": "Butcher",
-        "amount": 13184
-      },
-      {
-        "group": "Family Member",
-        "amount": 11871.22
-      },
-      {
-        "group": "Domain Names",
-        "amount": 10418.62
+        "group": "Furniture",
+        "amount": 18090.21
       },
       {
         "group": "Balkan Tatili",
-        "amount": 10291.58
+        "amount": 17979.82
+      },
+      {
+        "group": "Butcher",
+        "amount": 17045.0
+      },
+      {
+        "group": "Family Member",
+        "amount": 16943.45
+      },
+      {
+        "group": "Travel",
+        "amount": 16718.0
+      },
+      {
+        "group": "Entertainment",
+        "amount": 15283.63
+      },
+      {
+        "group": "Domain Names",
+        "amount": 14109.77
+      },
+      {
+        "group": "Accessories",
+        "amount": 10412.48
       },
       {
         "group": "Cash",
-        "amount": 3000
+        "amount": 3000.0
       },
       {
         "group": "Education",
-        "amount": 1756.7
+        "amount": 1785.35
       },
       {
         "group": "Software",
-        "amount": 683.2
+        "amount": 1099.8
       },
       {
         "group": "Insurance",
-        "amount": 450
+        "amount": 450.0
+      },
+      {
+        "group": "Books",
+        "amount": 232.82
       }
     ],
     "all_time_category_breakdown": [
       {
         "group": "Health",
-        "amount": 596539.47
+        "amount": 605552.33
+      },
+      {
+        "group": "Market",
+        "amount": 365065.17
       },
       {
         "group": "Furniture",
         "amount": 343545.21
       },
       {
-        "group": "Market",
-        "amount": 341782.05
-      },
-      {
         "group": "Gas & Car",
-        "amount": 179444.9
-      },
-      {
-        "group": "Online Commerce",
-        "amount": 124408.85
+        "amount": 187009.89
       },
       {
         "group": "Clothes",
-        "amount": 116039.16
+        "amount": 136169.09
+      },
+      {
+        "group": "Online Commerce",
+        "amount": 133408.29
       },
       {
         "group": "Entertainment",
-        "amount": 111959.18
+        "amount": 113179.18
       },
       {
         "group": "Utility Bill",
-        "amount": 95340.54
-      },
-      {
-        "group": "Accessories",
-        "amount": 64574.78
-      },
-      {
-        "group": "Butcher",
-        "amount": 59373.72
-      },
-      {
-        "group": "Family Member",
-        "amount": 48090.21
-      },
-      {
-        "group": "Dinner",
-        "amount": 43218.35
+        "amount": 105032.32
       },
       {
         "group": "Debt Payment",
-        "amount": 40516.68
+        "amount": 82002.35
+      },
+      {
+        "group": "Family Member",
+        "amount": 75494.21
+      },
+      {
+        "group": "Butcher",
+        "amount": 65832.72
+      },
+      {
+        "group": "Accessories",
+        "amount": 64574.8
+      },
+      {
+        "group": "Dinner",
+        "amount": 49313.35
       },
       {
         "group": "Apps",
-        "amount": 38028.81
+        "amount": 43335.18
       },
       {
         "group": "Finance",
-        "amount": 33763
+        "amount": 33763.0
       },
       {
         "group": "Domain Names",
-        "amount": 21055.91
+        "amount": 26986.9
       },
       {
-        "group": "Travel",
-        "amount": 16718
+        "group": "Balkan Tatili",
+        "amount": 17979.82
       },
       {
         "group": "Education",
-        "amount": 16446.33
+        "amount": 17348.98
+      },
+      {
+        "group": "Travel",
+        "amount": 16718.0
       },
       {
         "group": "Business",
         "amount": 14929.97
-      },
-      {
-        "group": "Balkan Tatili",
-        "amount": 10291.58
       },
       {
         "group": "Branding",
@@ -389,11 +397,11 @@
       },
       {
         "group": "Cash",
-        "amount": 3000
+        "amount": 3000.0
       },
       {
         "group": "Software",
-        "amount": 2732.8
+        "amount": 2807.8
       },
       {
         "group": "Insurance",
@@ -405,7 +413,7 @@
       },
       {
         "group": "Books",
-        "amount": 1589.43
+        "amount": 1822.25
       },
       {
         "group": "Software Development",
@@ -413,112 +421,82 @@
       },
       {
         "group": "Pet",
-        "amount": 550
+        "amount": 550.0
       },
       {
         "group": "Work",
-        "amount": 500
+        "amount": 500.0
       }
     ],
     "bank_expense_totals": [
       {
         "bank": "Yapı Kredi",
-        "amount": 1310041.71
+        "amount": 1398974.73
       },
       {
         "bank": "Garanti",
-        "amount": 331031.18
+        "amount": 339623.21
       },
       {
         "bank": "Akbank",
-        "amount": 292936.19
+        "amount": 292886.1
       },
       {
         "bank": "TOM Bank",
-        "amount": 215919.19
+        "amount": 271851.84
       },
       {
         "bank": "Enpara",
-        "amount": 104535.29
+        "amount": 105697.18
       },
       {
         "bank": "QNB",
-        "amount": 54451.9
+        "amount": 76995.24
       },
       {
         "bank": "İş Bankası",
-        "amount": 25060.36
+        "amount": 29429.4
       },
       {
         "bank": "Cash",
-        "amount": 3500
+        "amount": 3500.0
       }
     ],
     "upcoming_committed_expense": [
       {
-        "month": "July 2026",
-        "amount": 51296.43
-      },
-      {
         "month": "August 2026",
-        "amount": 51435.13
+        "amount": 61918.64
       },
       {
         "month": "September 2026",
-        "amount": 45803.71
+        "amount": 56287.22
       },
       {
         "month": "October 2026",
-        "amount": 45803.71
+        "amount": 50806.73
       },
       {
         "month": "November 2026",
-        "amount": 16426.21
+        "amount": 21429.23
       },
       {
         "month": "December 2026",
-        "amount": 7899.08
+        "amount": 10341.13
       },
       {
         "month": "January 2027",
-        "amount": 3224.48
+        "amount": 4474.81
       },
       {
         "month": "February 2027",
-        "amount": 3224.48
+        "amount": 4474.81
+      },
+      {
+        "month": "March 2027",
+        "amount": 1250.33
       }
     ],
     "major_recurring_items": [
-      {
-        "name": "Annem Beşiroğlu Part 2 - 3",
-        "month": "July 2026",
-        "amount": 28333.35
-      },
-      {
-        "name": "C5 Aircross Kasko - 2",
-        "month": "July 2026",
-        "amount": 3579.83
-      },
-      {
-        "name": "Decathlon Çadır - 2",
-        "month": "July 2026",
-        "amount": 3480.28
-      },
-      {
-        "name": "C5 Aircross Sigorta - 2",
-        "month": "July 2026",
-        "amount": 3161.12
-      },
-      {
-        "name": "Citizen Gold Tsuyosa - 4",
-        "month": "July 2026",
-        "amount": 2387.05
-      },
-      {
-        "name": "Yeni Izgara - 6",
-        "month": "July 2026",
-        "amount": 2209.95
-      },
       {
         "name": "Annem Beşiroğlu Part 2 - 4",
         "month": "August 2026",
@@ -542,7 +520,7 @@
       {
         "name": "Yataş Yatak - 9",
         "month": "August 2026",
-        "amount": 3000
+        "amount": 3000.0
       },
       {
         "name": "Citizen Gold Tsuyosa - 5",
@@ -647,15 +625,15 @@
     ],
     "top_categories": [
       "Health",
-      "Furniture",
       "Market",
+      "Furniture",
       "Gas & Car",
-      "Online Commerce",
       "Clothes",
+      "Online Commerce",
       "Entertainment",
       "Utility Bill",
-      "Accessories",
-      "Butcher"
+      "Debt Payment",
+      "Family Member"
     ],
     "monthly_category_breakdown": [
       {
@@ -671,7 +649,7 @@
           },
           {
             "group": "Butcher",
-            "amount": 7714
+            "amount": 7714.0
           },
           {
             "group": "Gas & Car",
@@ -707,7 +685,7 @@
           },
           {
             "group": "Education",
-            "amount": 1044
+            "amount": 1044.0
           },
           {
             "group": "Domain Names",
@@ -723,7 +701,7 @@
           },
           {
             "group": "Work",
-            "amount": 500
+            "amount": 500.0
           },
           {
             "group": "Books",
@@ -735,7 +713,7 @@
           },
           {
             "group": "Pet",
-            "amount": 200
+            "amount": 200.0
           },
           {
             "group": "Software Development",
@@ -772,7 +750,7 @@
           },
           {
             "group": "Butcher",
-            "amount": 2682
+            "amount": 2682.0
           },
           {
             "group": "Health",
@@ -829,7 +807,7 @@
         "items": [
           {
             "group": "Furniture",
-            "amount": 39911.78
+            "amount": 36911.78
           },
           {
             "group": "Market",
@@ -869,7 +847,7 @@
           },
           {
             "group": "Branding",
-            "amount": 965
+            "amount": 965.0
           },
           {
             "group": "Education",
@@ -954,11 +932,11 @@
           },
           {
             "group": "Branding",
-            "amount": 965
+            "amount": 965.0
           },
           {
             "group": "Pet",
-            "amount": 350
+            "amount": 350.0
           },
           {
             "group": "Family Member",
@@ -1019,7 +997,7 @@
           },
           {
             "group": "Butcher",
-            "amount": 1767
+            "amount": 1767.0
           },
           {
             "group": "Family Member",
@@ -1027,7 +1005,7 @@
           },
           {
             "group": "Branding",
-            "amount": 965
+            "amount": 965.0
           },
           {
             "group": "Apps",
@@ -1047,7 +1025,7 @@
           },
           {
             "group": "Insurance",
-            "amount": 150
+            "amount": 150.0
           }
         ]
       },
@@ -1088,7 +1066,7 @@
           },
           {
             "group": "Butcher",
-            "amount": 6145
+            "amount": 6145.0
           },
           {
             "group": "Entertainment",
@@ -1116,11 +1094,11 @@
           },
           {
             "group": "Branding",
-            "amount": 965
+            "amount": 965.0
           },
           {
             "group": "Insurance",
-            "amount": 150
+            "amount": 150.0
           },
           {
             "group": "Domain Names",
@@ -1149,7 +1127,7 @@
           },
           {
             "group": "Gas & Car",
-            "amount": 9720
+            "amount": 9720.0
           },
           {
             "group": "Furniture",
@@ -1177,7 +1155,7 @@
           },
           {
             "group": "Butcher",
-            "amount": 2803
+            "amount": 2803.0
           },
           {
             "group": "Apps",
@@ -1193,7 +1171,7 @@
           },
           {
             "group": "Branding",
-            "amount": 965
+            "amount": 965.0
           },
           {
             "group": "Education",
@@ -1201,7 +1179,7 @@
           },
           {
             "group": "Insurance",
-            "amount": 150
+            "amount": 150.0
           }
         ]
       },
@@ -1230,7 +1208,7 @@
           },
           {
             "group": "Gas & Car",
-            "amount": 9000
+            "amount": 9000.0
           },
           {
             "group": "Utility Bill",
@@ -1246,11 +1224,11 @@
           },
           {
             "group": "Dinner",
-            "amount": 4840
+            "amount": 4840.0
           },
           {
             "group": "Butcher",
-            "amount": 3506
+            "amount": 3506.0
           },
           {
             "group": "Family Member",
@@ -1274,7 +1252,7 @@
           },
           {
             "group": "Insurance",
-            "amount": 150
+            "amount": 150.0
           }
         ]
       },
@@ -1323,7 +1301,7 @@
           },
           {
             "group": "Business",
-            "amount": 1879
+            "amount": 1879.0
           },
           {
             "group": "Insurance",
@@ -1335,7 +1313,7 @@
           },
           {
             "group": "Butcher",
-            "amount": 360
+            "amount": 360.0
           }
         ]
       },
@@ -1368,7 +1346,7 @@
           },
           {
             "group": "Butcher",
-            "amount": 6854
+            "amount": 6854.0
           },
           {
             "group": "Accessories",
@@ -1376,7 +1354,7 @@
           },
           {
             "group": "Clothes",
-            "amount": 5812
+            "amount": 5812.0
           },
           {
             "group": "Gas & Car",
@@ -1392,11 +1370,11 @@
           },
           {
             "group": "Business",
-            "amount": 1879
+            "amount": 1879.0
           },
           {
             "group": "Insurance",
-            "amount": 150
+            "amount": 150.0
           }
         ]
       },
@@ -1441,7 +1419,7 @@
           },
           {
             "group": "Education",
-            "amount": 5000
+            "amount": 5000.0
           },
           {
             "group": "Domain Names",
@@ -1449,7 +1427,7 @@
           },
           {
             "group": "Butcher",
-            "amount": 3944
+            "amount": 3944.0
           },
           {
             "group": "Clothes",
@@ -1465,7 +1443,7 @@
           },
           {
             "group": "Insurance",
-            "amount": 150
+            "amount": 150.0
           }
         ]
       },
@@ -1514,15 +1492,15 @@
           },
           {
             "group": "Gas & Car",
-            "amount": 4000
+            "amount": 4000.0
           },
           {
             "group": "Entertainment",
-            "amount": 3750
+            "amount": 3750.0
           },
           {
             "group": "Butcher",
-            "amount": 2598
+            "amount": 2598.0
           },
           {
             "group": "Domain Names",
@@ -1530,15 +1508,15 @@
           },
           {
             "group": "Dinner",
-            "amount": 900
+            "amount": 900.0
           },
           {
             "group": "Education",
-            "amount": 874
+            "amount": 874.0
           },
           {
             "group": "Insurance",
-            "amount": 150
+            "amount": 150.0
           }
         ]
       },
@@ -1551,7 +1529,7 @@
           },
           {
             "group": "Dinner",
-            "amount": 15455
+            "amount": 15455.0
           },
           {
             "group": "Market",
@@ -1591,11 +1569,11 @@
           },
           {
             "group": "Gas & Car",
-            "amount": 3500
+            "amount": 3500.0
           },
           {
             "group": "Butcher",
-            "amount": 3401
+            "amount": 3401.0
           },
           {
             "group": "Entertainment",
@@ -1611,7 +1589,7 @@
           },
           {
             "group": "Insurance",
-            "amount": 150
+            "amount": 150.0
           }
         ]
       },
@@ -1632,11 +1610,11 @@
           },
           {
             "group": "Travel",
-            "amount": 16718
+            "amount": 16718.0
           },
           {
             "group": "Dinner",
-            "amount": 15510
+            "amount": 15510.0
           },
           {
             "group": "Utility Bill",
@@ -1656,11 +1634,11 @@
           },
           {
             "group": "Butcher",
-            "amount": 7185
+            "amount": 7185.0
           },
           {
             "group": "Furniture",
-            "amount": 7164
+            "amount": 7164.0
           },
           {
             "group": "Online Commerce",
@@ -1680,11 +1658,11 @@
           },
           {
             "group": "Cash",
-            "amount": 3000
+            "amount": 3000.0
           },
           {
             "group": "Family Member",
-            "amount": 2387
+            "amount": 2387.0
           },
           {
             "group": "Debt Payment",
@@ -1700,7 +1678,7 @@
           },
           {
             "group": "Insurance",
-            "amount": 150
+            "amount": 150.0
           }
         ]
       },
@@ -1708,48 +1686,84 @@
         "month": "July 2026",
         "items": [
           {
+            "group": "Debt Payment",
+            "amount": 41485.67
+          },
+          {
             "group": "Health",
-            "amount": 28333.35
+            "amount": 37346.21
+          },
+          {
+            "group": "Market",
+            "amount": 23283.12
           },
           {
             "group": "Gas & Car",
-            "amount": 6740.95
-          },
-          {
-            "group": "Online Commerce",
-            "amount": 3948.44
-          },
-          {
-            "group": "Entertainment",
-            "amount": 3480.28
+            "amount": 14305.94
           },
           {
             "group": "Clothes",
-            "amount": 3056.45
+            "amount": 11204.54
           },
           {
             "group": "Family Member",
-            "amount": 2387.05
+            "amount": 9814.37
           },
           {
-            "group": "Accessories",
-            "amount": 1570.27
+            "group": "Utility Bill",
+            "amount": 9691.78
           },
           {
-            "group": "Furniture",
-            "amount": 866
+            "group": "Online Commerce",
+            "amount": 7740.3
+          },
+          {
+            "group": "Balkan Tatili",
+            "amount": 7688.24
+          },
+          {
+            "group": "Butcher",
+            "amount": 6459.0
+          },
+          {
+            "group": "Dinner",
+            "amount": 6095.0
+          },
+          {
+            "group": "Domain Names",
+            "amount": 5930.99
           },
           {
             "group": "Apps",
-            "amount": 422.04
+            "amount": 5728.41
+          },
+          {
+            "group": "Entertainment",
+            "amount": 4700.28
+          },
+          {
+            "group": "Furniture",
+            "amount": 3866.0
+          },
+          {
+            "group": "Accessories",
+            "amount": 1570.29
+          },
+          {
+            "group": "Education",
+            "amount": 902.65
           },
           {
             "group": "Software",
-            "amount": 341.6
+            "amount": 416.6
+          },
+          {
+            "group": "Books",
+            "amount": 232.82
           },
           {
             "group": "Insurance",
-            "amount": 150
+            "amount": 150.0
           }
         ]
       },
@@ -1761,12 +1775,20 @@
             "amount": 28333.35
           },
           {
+            "group": "Family Member",
+            "amount": 9814.42
+          },
+          {
             "group": "Gas & Car",
             "amount": 6740.95
           },
           {
             "group": "Online Commerce",
-            "amount": 3948.44
+            "amount": 5358.41
+          },
+          {
+            "group": "Clothes",
+            "amount": 4277.59
           },
           {
             "group": "Entertainment",
@@ -1774,15 +1796,7 @@
           },
           {
             "group": "Furniture",
-            "amount": 3000
-          },
-          {
-            "group": "Clothes",
-            "amount": 2631.42
-          },
-          {
-            "group": "Family Member",
-            "amount": 2387.05
+            "amount": 3000.0
           },
           {
             "group": "Apps",
@@ -1794,7 +1808,7 @@
           },
           {
             "group": "Insurance",
-            "amount": 150
+            "amount": 150.0
           }
         ]
       },
@@ -1806,24 +1820,24 @@
             "amount": 28333.35
           },
           {
+            "group": "Family Member",
+            "amount": 9814.42
+          },
+          {
             "group": "Gas & Car",
             "amount": 6740.95
+          },
+          {
+            "group": "Clothes",
+            "amount": 4277.59
           },
           {
             "group": "Entertainment",
             "amount": 3480.28
           },
           {
-            "group": "Clothes",
-            "amount": 2631.42
-          },
-          {
-            "group": "Family Member",
-            "amount": 2387.05
-          },
-          {
             "group": "Online Commerce",
-            "amount": 1467.02
+            "amount": 2876.99
           },
           {
             "group": "Apps",
@@ -1847,20 +1861,20 @@
             "amount": 6740.95
           },
           {
+            "group": "Family Member",
+            "amount": 4948.02
+          },
+          {
+            "group": "Clothes",
+            "amount": 4277.59
+          },
+          {
             "group": "Entertainment",
             "amount": 3480.28
           },
           {
-            "group": "Clothes",
-            "amount": 2631.42
-          },
-          {
-            "group": "Family Member",
-            "amount": 2387.05
-          },
-          {
             "group": "Online Commerce",
-            "amount": 1467.02
+            "amount": 2262.9
           },
           {
             "group": "Apps",
@@ -1880,20 +1894,20 @@
             "amount": 6740.95
           },
           {
+            "group": "Family Member",
+            "amount": 4948.02
+          },
+          {
             "group": "Entertainment",
             "amount": 3480.28
           },
           {
-            "group": "Family Member",
-            "amount": 2387.05
-          },
-          {
             "group": "Clothes",
-            "amount": 1587.27
+            "amount": 3233.44
           },
           {
             "group": "Online Commerce",
-            "amount": 1467.02
+            "amount": 2262.9
           },
           {
             "group": "Apps",
@@ -1909,6 +1923,10 @@
         "month": "December 2026",
         "items": [
           {
+            "group": "Clothes",
+            "amount": 3233.44
+          },
+          {
             "group": "Gas & Car",
             "amount": 3161.12
           },
@@ -1917,8 +1935,8 @@
             "amount": 2387.05
           },
           {
-            "group": "Clothes",
-            "amount": 1587.27
+            "group": "Online Commerce",
+            "amount": 795.88
           },
           {
             "group": "Apps",
@@ -1938,6 +1956,10 @@
             "amount": 3161.12
           },
           {
+            "group": "Clothes",
+            "amount": 1250.33
+          },
+          {
             "group": "Apps",
             "amount": 63.36
           }
@@ -1951,12 +1973,25 @@
             "amount": 3161.12
           },
           {
+            "group": "Clothes",
+            "amount": 1250.33
+          },
+          {
             "group": "Apps",
             "amount": 63.36
           }
         ]
+      },
+      {
+        "month": "March 2027",
+        "items": [
+          {
+            "group": "Clothes",
+            "amount": 1250.33
+          }
+        ]
       }
     ],
-    "current_month": "July 2026"
+    "current_month": "August 2026"
   }
 }
