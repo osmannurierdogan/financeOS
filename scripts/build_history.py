@@ -20,7 +20,7 @@ MONTH_ORDER = ["January", "February", "March", "April", "May", "June",
 
 # Boundary between "gerçekleşen" (actual) and "planlanan" (future/installment-only)
 # months. Everything from this Payment Month onward is treated as planned.
-CURRENT_MONTH = "July 2026"
+CURRENT_MONTH = "August 2026"
 
 TOP_CATEGORY_COUNT = 10
 
