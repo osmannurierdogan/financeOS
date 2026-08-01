@@ -1472,8 +1472,9 @@
       const fl = document.getElementById('family-list'); fl.innerHTML = '';
       state.family.forEach((f, i) => {
         const row = document.createElement('div'); row.className = 'family-row';
+        const amtText = f.amount < 0 ? ('Alacak: ' + fmt(Math.abs(f.amount))) : (f.amount === 0 ? 'Kapandı ✓' : fmt(f.amount));
         row.innerHTML = `<div class="name">${f.name}</div>
-      <div class="amt ${f.amount <= 0 ? 'zero' : ''}">${f.amount <= 0 ? 'Kapandı ✓' : fmt(f.amount)}</div>
+      <div class="amt ${f.amount <= 0 ? 'zero' : ''}">${amtText}</div>
       <div class="pay-form"><input type="number" placeholder="Ödeme" data-idx="${i}" min="0"><button data-idx="${i}">Ekle</button></div>`;
         fl.appendChild(row);
       });
@@ -1482,7 +1483,7 @@
           const idx = Number(e.target.dataset.idx);
           const input = fl.querySelector(`input[data-idx="${idx}"]`);
           const val = parseNum(input.value);
-          if (val > 0) { state.family[idx].amount = Math.max(0, state.family[idx].amount - val); input.value = ''; saveDraft(); }
+          if (val > 0) { state.family[idx].amount = state.family[idx].amount - val; input.value = ''; saveDraft(); }
         });
       });
 

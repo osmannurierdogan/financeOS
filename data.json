@@ -110,7 +110,11 @@
       },
       {
         "name": "Abi",
-        "amount": 25618.11
+        "amount": -7000
+      },
+      {
+        "name": "Kız Kardeş",
+        "amount": 2000
       }
     ],
     "roadmapChecks": [
