@@ -4,7 +4,7 @@
     "note": "Bu dosya dashboard.html tarafından okunur. 'history' bölümü scripts/build_history.py ile Notion 'Monthly Budget' CSV dışa aktarımından otomatik üretilir (python3 scripts/build_history.py export.csv). 'snapshot' alanını elle güncelleyip GitHub'a push'layarak tüm cihazlarda güncel veriyi görebilirsiniz."
   },
   "snapshot": {
-    "income": 140000,
+    "income": 160000,
     "fixedCost": 85000,
     "goldGrams": 60,
     "goldPrice": 6200,
