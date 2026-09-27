@@ -221,6 +221,30 @@
       line-height: 1.55;
     }
 
+    .currency-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .currency-bar select {
+      width: 90px;
+      flex: none;
+    }
+
+    @media (max-width: 560px) {
+      .currency-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .currency-bar select {
+        width: 100%;
+      }
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
@@ -339,21 +363,8 @@
       min-width: 110px;
     }
 
-    .add-form button {
-      border: none;
-      background: var(--teal-700);
-      color: #fff;
-      padding: 9px 16px;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: 'Inter', sans-serif;
-      height: 34px;
-    }
-
-    .add-form button:hover {
-      background: var(--teal-900);
+    .table-scroll {
+      overflow-x: auto;
     }
 
     .schedule-row {
@@ -397,13 +408,49 @@
       margin-top: 32px;
     }
 
-    @media (max-width: 700px) {
+    @media (max-width: 1024px) {
+      .kpi-row.five {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
       .kpi-row.five {
         grid-template-columns: repeat(2, 1fr);
       }
+    }
 
+    @media (max-width: 900px) {
       .kpi-row {
         grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 560px) {
+      .kpi-row,
+      .kpi-row.five {
+        grid-template-columns: 1fr;
+      }
+
+      .add-form {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .add-form .field {
+        min-width: 0;
+      }
+
+      .add-form button {
+        width: 100%;
+      }
+
+      .schedule-row {
+        align-items: flex-start;
+      }
+
+      .schedule-row .day {
+        width: auto;
       }
     }
   </style>
@@ -428,23 +475,33 @@
 
     <div id="status-banner"></div>
 
+    <div class="callout currency-bar">
+      <div>
+        <strong>Tüm tutarlar USD olarak saklanır.</strong> Görüntüleme dövizini değiştirmek sadece ekrandaki gösterimi etkiler.
+        <span id="fx-updated"></span>
+      </div>
+      <select class="edit" id="iym-currency-select"></select>
+    </div>
+
     <div class="panel">
       <h2>İYM Maliyeti</h2>
       <div class="desc">İyi Yaşam Maliyeti — yaşamak istediğiniz hayatın gerçek maliyeti, kalem kalem.</div>
-      <table>
-        <thead>
-          <tr>
-            <th>Kalem</th>
-            <th>Tutar</th>
-            <th>Periyot</th>
-            <th>Açıklama</th>
-            <th>Haftalık</th>
-            <th>Aylık</th>
-            <th>Yıllık</th>
-          </tr>
-        </thead>
-        <tbody id="iym-cost-table"></tbody>
-      </table>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Kalem</th>
+              <th>Tutar</th>
+              <th>Periyot</th>
+              <th>Açıklama</th>
+              <th>Haftalık</th>
+              <th>Aylık</th>
+              <th>Yıllık</th>
+            </tr>
+          </thead>
+          <tbody id="iym-cost-table"></tbody>
+        </table>
+      </div>
       <div class="kpi-row" style="margin-top:18px;">
         <div class="kpi">
           <div class="label">Haftalık Toplam İYM</div>
@@ -508,22 +565,24 @@
         <div class="field"><label>Tarih</label><input class="edit" type="date" id="iym-dr-date"></div>
         <div class="field"><label>Trafik</label><input class="edit num" style="width:100%" type="number" id="iym-dr-traffic" min="0"></div>
         <div class="field"><label>Müşteri</label><input class="edit num" style="width:100%" type="number" id="iym-dr-customers" min="0"></div>
-        <div class="field"><label>Kazanç (TL)</label><input class="edit num" style="width:100%" type="number" id="iym-dr-earnings" min="0"></div>
+        <div class="field"><label id="iym-dr-earnings-label">Kazanç</label><input class="edit num" style="width:100%" type="number" id="iym-dr-earnings" min="0"></div>
         <div class="field" style="flex:2;"><label>Not</label><input class="edit text" type="text" id="iym-dr-notes"></div>
-        <button id="iym-dr-add-btn">Ekle</button>
+        <button class="btn" id="iym-dr-add-btn">Ekle</button>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Tarih</th>
-            <th>Trafik</th>
-            <th>Müşteri</th>
-            <th>Kazanç</th>
-            <th>Not</th>
-          </tr>
-        </thead>
-        <tbody id="iym-daily-table"></tbody>
-      </table>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Tarih</th>
+              <th>Trafik</th>
+              <th>Müşteri</th>
+              <th>Kazanç</th>
+              <th>Not</th>
+            </tr>
+          </thead>
+          <tbody id="iym-daily-table"></tbody>
+        </table>
+      </div>
     </div>
 
     <div class="panel">
@@ -581,16 +640,53 @@
     };
 
     const BUSINESS_FIELDS = [
-      { key: 'investmentRate', label: 'Yatırım Oranı (ör. 0.20 = %20)' },
-      { key: 'platformRent', label: 'Platform Kirası (Aylık, TL)' },
-      { key: 'platformCommissionRate', label: 'Platform Komisyon Oranı' },
-      { key: 'paymentProcessorRate', label: 'Ödeme Altyapısı Kesinti Oranı' },
-      { key: 'taxRate', label: 'Vergi Oranı' },
-      { key: 'productPrice', label: 'Ürün Fiyatı (TL)' },
-      { key: 'profitMargin', label: 'Kâr Marjı' },
-      { key: 'salesConversionRate', label: 'Satış Dönüşüm Oranı' },
-      { key: 'leadConversionRate', label: 'Lead Dönüşüm Oranı' }
+      { key: 'investmentRate', label: 'Yatırım Oranı (ör. 0.20 = %20)', isCurrency: false },
+      { key: 'platformRent', label: 'Platform Kirası (Aylık)', isCurrency: true },
+      { key: 'platformCommissionRate', label: 'Platform Komisyon Oranı', isCurrency: false },
+      { key: 'paymentProcessorRate', label: 'Ödeme Altyapısı Kesinti Oranı', isCurrency: false },
+      { key: 'taxRate', label: 'Vergi Oranı', isCurrency: false },
+      { key: 'productPrice', label: 'Ürün Fiyatı', isCurrency: true },
+      { key: 'profitMargin', label: 'Kâr Marjı', isCurrency: false },
+      { key: 'salesConversionRate', label: 'Satış Dönüşüm Oranı', isCurrency: false },
+      { key: 'leadConversionRate', label: 'Lead Dönüşüm Oranı', isCurrency: false }
     ];
+
+    // Tüm tutarlar USD olarak saklanır (state.iym.*'daki amount/platformRent/productPrice/
+    // earnings alanları); ekranda seçilen döviz sadece görüntüleme/girdi katmanında
+    // dönüştürülür. Kur bulunamazsa (API erişilemez) USD'ye sabitlenir.
+    const CURRENCIES = ['USD', 'TRY', 'EUR', 'GBP', 'AED', 'CAD', 'AUD'];
+    const CURRENCY_SYMBOL = { USD: '$', TRY: '₺', EUR: '€', GBP: '£', AED: 'AED', CAD: 'CA$', AUD: 'A$' };
+    const CURRENCY_KEY = 'iym-display-currency';
+    let displayCurrency = (function () { try { return localStorage.getItem(CURRENCY_KEY) || 'USD'; } catch (e) { return 'USD'; } })();
+    let fxRates = { USD: 1 };
+    let fxReady = false;
+
+    async function loadFxRates() {
+      try {
+        const res = await fetch('https://open.er-api.com/v6/latest/USD');
+        const data = await res.json();
+        if (data && data.result === 'success' && data.rates) {
+          fxRates = data.rates;
+          fxRates.USD = 1;
+          fxReady = true;
+          const el = document.getElementById('fx-updated');
+          if (el) el.textContent = data.time_last_update_utc ? ('Kur tarihi: ' + data.time_last_update_utc) : '';
+        } else {
+          throw new Error('bad fx response');
+        }
+      } catch (e) {
+        fxRates = { USD: 1 };
+        fxReady = false;
+        if (displayCurrency !== 'USD') {
+          displayCurrency = 'USD';
+          try { localStorage.setItem(CURRENCY_KEY, 'USD'); } catch (err) { }
+        }
+        showBanner('Döviz kurları alınamadı, tutarlar USD olarak gösteriliyor.', true);
+      }
+    }
+
+    function toDisplay(usd) { return (Number(usd) || 0) * (fxRates[displayCurrency] || 1); }
+    function fromDisplay(val) { return (Number(val) || 0) / (fxRates[displayCurrency] || 1); }
 
     function idbGet(key) {
       return new Promise((resolve) => {
@@ -691,7 +787,8 @@
       }
     }
 
-    const fmt = n => Number(n).toLocaleString('tr-TR', { maximumFractionDigits: 2 }) + ' TL';
+    // fmt() bir USD tutarını alır, seçili görüntüleme dövizine çevirip biçimlendirir.
+    const fmt = usd => Number(toDisplay(usd)).toLocaleString('tr-TR', { maximumFractionDigits: 2 }) + ' ' + (CURRENCY_SYMBOL[displayCurrency] || displayCurrency);
     const fmtNum = n => Number(n).toLocaleString('tr-TR', { maximumFractionDigits: 2 });
     const parseNum = val => {
       if (val === undefined || val === null || val === '') return 0;
@@ -837,7 +934,7 @@
         weeklyTotal += weekly;
         const tr = document.createElement('tr');
         tr.innerHTML = `<td>${item.name}</td>
-      <td><input class="edit num" data-idx="${i}" data-field="amount" value="${fmtNum(item.amount)}"></td>
+      <td><input class="edit num" data-idx="${i}" data-field="amount" value="${fmtNum(toDisplay(item.amount))}"></td>
       <td><select class="edit" data-idx="${i}" data-field="period">
         <option value="Hafta" ${item.period === 'Hafta' ? 'selected' : ''}>Hafta</option>
         <option value="Ay" ${item.period === 'Ay' ? 'selected' : ''}>Ay</option>
@@ -853,7 +950,8 @@
         el.addEventListener('change', e => {
           const idx = Number(e.target.dataset.idx);
           const field = e.target.dataset.field;
-          state.iym.costItems[idx][field] = field === 'amount' ? parseNum(e.target.value) : e.target.value;
+          if (field === 'amount') state.iym.costItems[idx].amount = fromDisplay(parseNum(e.target.value));
+          else state.iym.costItems[idx][field] = e.target.value;
           saveDraft();
         });
       });
@@ -872,12 +970,17 @@
       const b = state.iym.business;
       BUSINESS_FIELDS.forEach(f => {
         const div = document.createElement('div'); div.className = 'field';
-        div.innerHTML = `<label>${f.label}</label><input class="edit" data-field="${f.key}" value="${fmtNum(b[f.key])}">`;
+        const label = f.isCurrency ? `${f.label} (${displayCurrency})` : f.label;
+        const val = f.isCurrency ? toDisplay(b[f.key]) : b[f.key];
+        div.innerHTML = `<label>${label}</label><input class="edit" data-field="${f.key}" data-currency="${f.isCurrency}" value="${fmtNum(val)}">`;
         fg.appendChild(div);
       });
       fg.querySelectorAll('[data-field]').forEach(inp => {
         inp.addEventListener('change', e => {
-          state.iym.business[e.target.dataset.field] = parseNum(e.target.value);
+          const key = e.target.dataset.field;
+          const isCurrency = e.target.dataset.currency === 'true';
+          const parsed = parseNum(e.target.value);
+          state.iym.business[key] = isCurrency ? fromDisplay(parsed) : parsed;
           saveDraft();
         });
       });
@@ -928,6 +1031,7 @@
     }
 
     function renderDailyRevenue(targets) {
+      document.getElementById('iym-dr-earnings-label').textContent = `Kazanç (${displayCurrency})`;
       document.getElementById('iym-daily-target').textContent =
         `Günlük hedef (haftalık gerekliden türetilmiştir): ~${fmtNum(targets.requiredTraffic / 7)} trafik, ~${fmtNum(targets.requiredLeads / 7)} lead, ${fmt(targets.requiredProfit / 7)} kâr.`;
 
@@ -979,6 +1083,17 @@
 
     document.getElementById('connect-btn').addEventListener('click', connectFileHandle);
 
+    function initCurrencySelect() {
+      const sel = document.getElementById('iym-currency-select');
+      sel.innerHTML = CURRENCIES.map(c => `<option value="${c}" ${c === displayCurrency ? 'selected' : ''}>${c}</option>`).join('');
+      sel.disabled = !fxReady;
+      sel.addEventListener('change', e => {
+        displayCurrency = e.target.value;
+        try { localStorage.setItem(CURRENCY_KEY, displayCurrency); } catch (err) { }
+        render();
+      });
+    }
+
     document.getElementById('iym-dr-add-btn').addEventListener('click', () => {
       const dateEl = document.getElementById('iym-dr-date');
       const trafficEl = document.getElementById('iym-dr-traffic');
@@ -990,7 +1105,7 @@
         date: dateEl.value,
         traffic: parseNum(trafficEl.value),
         customers: parseNum(customersEl.value),
-        earnings: parseNum(earningsEl.value),
+        earnings: fromDisplay(parseNum(earningsEl.value)),
         notes: notesEl.value.trim()
       });
       dateEl.value = ''; trafficEl.value = ''; customersEl.value = ''; earningsEl.value = ''; notesEl.value = '';
@@ -1006,7 +1121,11 @@
       a.click();
     });
 
-    loadData();
+    (async function init() {
+      await loadFxRates();
+      initCurrencySelect();
+      await loadData();
+    })();
   </script>
 </body>
 
