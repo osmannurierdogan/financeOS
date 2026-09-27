@@ -123,7 +123,76 @@
       false,
       false,
       false
-    ]
+    ],
+    "iym": {
+      "costItems": [
+        { "name": "Barınma", "amount": 0, "period": "Ay", "description": "" },
+        { "name": "Ulaşım", "amount": 0, "period": "Ay", "description": "" },
+        { "name": "Tatil/Gezi", "amount": 0, "period": "Ay", "description": "" },
+        { "name": "İhtiyaçlar", "amount": 0, "period": "Ay", "description": "" },
+        { "name": "Eğitim", "amount": 0, "period": "Ay", "description": "" },
+        { "name": "Ekip", "amount": 0, "period": "Ay", "description": "" },
+        { "name": "Diğer", "amount": 0, "period": "Ay", "description": "" }
+      ],
+      "business": {
+        "investmentRate": 0.2,
+        "platformRent": 54,
+        "platformCommissionRate": 0.01,
+        "paymentProcessorRate": 0.029,
+        "taxRate": 0.18,
+        "productPrice": 30,
+        "profitMargin": 0.25,
+        "salesConversionRate": 0.05,
+        "leadConversionRate": 0.2
+      },
+      "goals": [
+        {
+          "section": "A. Doğru Ürün",
+          "items": [
+            { "text": "İnsanlara ne sunacaksınız? Ürününüz veya hizmetiniz nedir? $30 tutarında %30 kar marjı getirecek ürün nedir?", "done": false },
+            { "text": "Bir ürünü satmak ne kadar zaman alıyor? Haftada 6, 60 veya 600 satış hedefini buna göre belirleyeceksiniz.", "done": false },
+            { "text": "Ürününüz fiyatını hak ediyor mu? Kendinizi alıcı yerine koyun, empati kurun ve ürününüzün fiyatını hak etmesini sağlayın.", "done": false },
+            { "text": "Ürününüzün arkasında durun! Seçtiğiniz ürüne %100 güvenmelisiniz, güvenilir ürünlerin satışı her zaman daha kolaydır.", "done": false }
+          ]
+        },
+        {
+          "section": "B. İş Bilgisi",
+          "items": [
+            { "text": "Ömür boyu kazancınızı hesaplayın. Bir üründen kazanacağınız toplam miktar, ÖBK (Ömür Boyu Kazanç) miktarıdır. Seçtiğiniz ürünü 1 müşteri mutlaka ortalama 2 kere satın alabilir olmalı.", "done": false },
+            { "text": "Bir müşteriye birkaç defa satacak şekilde planlama yapın. Sürekli alınan, yenilenen, bağımlılık yapan upsell ürünleri seçin. Geliştirilebilir olmasına dikkat edin.", "done": false },
+            { "text": "4, 5, 6, 7 haneli satışlar için planınızı çıkartın. Satışlarınız arttığında tedarik ve gönderim yapabilecek şekilde organize olun.", "done": false },
+            { "text": "Yatırım dönüşümü ve satış başına reklam maliyetini sabitleyin. (CPP, CPM, CR, ROI, ROAS)", "done": false },
+            { "text": "Zarar etmeyecek şekilde bütçe ve zaman ayırın. İlk seçtiğiniz ürüne 2 haftadan fazla zaman ve $500'dan fazla para harcamayın.", "done": false },
+            { "text": "Satış sayfası hazırlayın. Ürününüzü detaylı olarak tanıtacak, satış odaklı bir satış sayfası hazırlayın.", "done": false }
+          ]
+        },
+        {
+          "section": "C. Satış Stratejisi",
+          "items": [
+            { "text": "Ürünü içeriklendirin. Ürününüze yorum, kısa gif ve videolar hazırlatın ve social proof yani kullanıcı yorumlarını gösterin.", "done": false },
+            { "text": "Müşterilerinizin asla reddedemeyeceği bir teklif yapın veya garanti verin. Teklifiniz sizi gece rahat uyutmamalı.", "done": false }
+          ]
+        },
+        {
+          "section": "D. Trafik",
+          "items": [
+            { "text": "Leadlerinizin en az %10'una satış yapmalısınız. Leadleriniz satış yapmanıza en yakın olduğunuz kitle. İlk hedefiniz %10'una satış gerçekleştirmek olmalı.", "done": false },
+            { "text": "Lead mıknatısı yaratın. Ücretsiz, demo, free offer, trial gibi lead mıknatısları yaratın. Böylece İYM hedefine ulaşmak için haftalık satış miktarını tutturabilirsiniz.", "done": false },
+            { "text": "Reklam içeriği oluştur. Satış yapmanızı sağlayacak şekilde ürününüzü tanıtacak doğru içeriği oluşturun.", "done": false }
+          ]
+        }
+      ],
+      "dailyRevenue": [],
+      "weeklySchedule": {
+        "Pazartesi": { "start": "", "end": "" },
+        "Salı": { "start": "", "end": "" },
+        "Çarşamba": { "start": "", "end": "" },
+        "Perşembe": { "start": "", "end": "" },
+        "Cuma": { "start": "", "end": "" },
+        "Cumartesi": { "start": "", "end": "" },
+        "Pazar": { "start": "", "end": "" }
+      }
+    }
   },
   "history": {
     "monthly_expense_history": [
