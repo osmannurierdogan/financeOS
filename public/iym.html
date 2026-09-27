@@ -339,21 +339,8 @@
       min-width: 110px;
     }
 
-    .add-form button {
-      border: none;
-      background: var(--teal-700);
-      color: #fff;
-      padding: 9px 16px;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: 'Inter', sans-serif;
-      height: 34px;
-    }
-
-    .add-form button:hover {
-      background: var(--teal-900);
+    .table-scroll {
+      overflow-x: auto;
     }
 
     .schedule-row {
@@ -397,13 +384,49 @@
       margin-top: 32px;
     }
 
-    @media (max-width: 700px) {
+    @media (max-width: 1024px) {
+      .kpi-row.five {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
       .kpi-row.five {
         grid-template-columns: repeat(2, 1fr);
       }
+    }
 
+    @media (max-width: 900px) {
       .kpi-row {
         grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 560px) {
+      .kpi-row,
+      .kpi-row.five {
+        grid-template-columns: 1fr;
+      }
+
+      .add-form {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .add-form .field {
+        min-width: 0;
+      }
+
+      .add-form button {
+        width: 100%;
+      }
+
+      .schedule-row {
+        align-items: flex-start;
+      }
+
+      .schedule-row .day {
+        width: auto;
       }
     }
   </style>
@@ -431,20 +454,22 @@
     <div class="panel">
       <h2>İYM Maliyeti</h2>
       <div class="desc">İyi Yaşam Maliyeti — yaşamak istediğiniz hayatın gerçek maliyeti, kalem kalem.</div>
-      <table>
-        <thead>
-          <tr>
-            <th>Kalem</th>
-            <th>Tutar</th>
-            <th>Periyot</th>
-            <th>Açıklama</th>
-            <th>Haftalık</th>
-            <th>Aylık</th>
-            <th>Yıllık</th>
-          </tr>
-        </thead>
-        <tbody id="iym-cost-table"></tbody>
-      </table>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Kalem</th>
+              <th>Tutar</th>
+              <th>Periyot</th>
+              <th>Açıklama</th>
+              <th>Haftalık</th>
+              <th>Aylık</th>
+              <th>Yıllık</th>
+            </tr>
+          </thead>
+          <tbody id="iym-cost-table"></tbody>
+        </table>
+      </div>
       <div class="kpi-row" style="margin-top:18px;">
         <div class="kpi">
           <div class="label">Haftalık Toplam İYM</div>
@@ -510,20 +535,22 @@
         <div class="field"><label>Müşteri</label><input class="edit num" style="width:100%" type="number" id="iym-dr-customers" min="0"></div>
         <div class="field"><label>Kazanç (TL)</label><input class="edit num" style="width:100%" type="number" id="iym-dr-earnings" min="0"></div>
         <div class="field" style="flex:2;"><label>Not</label><input class="edit text" type="text" id="iym-dr-notes"></div>
-        <button id="iym-dr-add-btn">Ekle</button>
+        <button class="btn" id="iym-dr-add-btn">Ekle</button>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Tarih</th>
-            <th>Trafik</th>
-            <th>Müşteri</th>
-            <th>Kazanç</th>
-            <th>Not</th>
-          </tr>
-        </thead>
-        <tbody id="iym-daily-table"></tbody>
-      </table>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Tarih</th>
+              <th>Trafik</th>
+              <th>Müşteri</th>
+              <th>Kazanç</th>
+              <th>Not</th>
+            </tr>
+          </thead>
+          <tbody id="iym-daily-table"></tbody>
+        </table>
+      </div>
     </div>
 
     <div class="panel">
