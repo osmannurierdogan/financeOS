@@ -521,6 +521,27 @@
     <div class="panel">
       <h2>İşiniz İçin Maliyet Tablosu</h2>
       <div class="desc">İYM'nizi karşılamak için işinizden ne kadar kâr, gelir, satış, lead ve trafiğe ihtiyacınız var.</div>
+
+      <h3>Yazılım / Araç Giderleri</h3>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Kalem</th>
+              <th>Tutar</th>
+              <th>Periyot</th>
+              <th>Açıklama</th>
+              <th>Haftalık</th>
+              <th>Aylık</th>
+              <th>Yıllık</th>
+            </tr>
+          </thead>
+          <tbody id="iym-tools-table"></tbody>
+        </table>
+      </div>
+      <div class="desc" id="iym-tools-total" style="margin-top:10px;margin-bottom:0;"></div>
+
+      <h3>Parametreler</h3>
       <div class="field-grid" id="iym-business-fields"></div>
       <div class="kpi-row five">
         <div class="kpi">
@@ -626,6 +647,13 @@
         { name: 'Ekip', amount: 0, period: 'Ay', description: '' },
         { name: 'Diğer', amount: 0, period: 'Ay', description: '' }
       ],
+      businessCostItems: [
+        { name: 'Higgsfield', amount: 0, period: 'Ay', description: '' },
+        { name: 'Claude', amount: 0, period: 'Ay', description: '' },
+        { name: 'Shopify Appleri', amount: 0, period: 'Ay', description: 'Hangi uygulamalar dahil olduğunu belirtip güncelleyin' },
+        { name: 'Canva', amount: 0, period: 'Ay', description: '' },
+        { name: 'CapCut', amount: 0, period: 'Ay', description: '' }
+      ],
       business: {
         investmentRate: 0.20, platformRent: 54, platformCommissionRate: 0.01,
         paymentProcessorRate: 0.029, taxRate: 0.18, productPrice: 30,
@@ -641,7 +669,7 @@
 
     const BUSINESS_FIELDS = [
       { key: 'investmentRate', label: 'Yatırım Oranı (ör. 0.20 = %20)', isCurrency: false },
-      { key: 'platformRent', label: 'Platform Kirası (Aylık)', isCurrency: true },
+      { key: 'platformRent', label: 'Shopify Platform Kirası (Aylık)', isCurrency: true },
       { key: 'platformCommissionRate', label: 'Platform Komisyon Oranı', isCurrency: false },
       { key: 'paymentProcessorRate', label: 'Ödeme Altyapısı Kesinti Oranı', isCurrency: false },
       { key: 'taxRate', label: 'Vergi Oranı', isCurrency: false },
@@ -832,6 +860,7 @@
       if (!state.iym) { state.iym = JSON.parse(JSON.stringify(DEFAULT_IYM)); return; }
       const iym = state.iym;
       if (!iym.costItems || !iym.costItems.length) iym.costItems = JSON.parse(JSON.stringify(DEFAULT_IYM.costItems));
+      if (!iym.businessCostItems) iym.businessCostItems = JSON.parse(JSON.stringify(DEFAULT_IYM.businessCostItems));
       iym.business = Object.assign({}, DEFAULT_IYM.business, iym.business);
       if (!iym.goals) iym.goals = [];
       if (!iym.dailyRevenue) iym.dailyRevenue = [];
@@ -923,11 +952,15 @@
       return (Number(item.amount) || 0) / WEEKS_PER_MONTH; // 'Ay' (varsayılan)
     }
 
-    function renderCostItems() {
-      const tbody = document.getElementById('iym-cost-table');
+    // Hem İYM Maliyeti hem Yazılım/Araç Giderleri tabloları aynı satır şeklini
+    // (kalem adı, tutar, periyot, açıklama + haftalık/aylık/yıllık) kullanıyor;
+    // bu yüzden satır render+düzenleme mantığı tek yerde, `items` dizisine
+    // doğrudan referansla (mutasyon üzerinden) paylaşılıyor.
+    function renderItemsTable(tbodyId, items) {
+      const tbody = document.getElementById(tbodyId);
       tbody.innerHTML = '';
       let weeklyTotal = 0;
-      state.iym.costItems.forEach((item, i) => {
+      items.forEach((item, i) => {
         const weekly = weeklyOf(item);
         const monthly = weekly * WEEKS_PER_MONTH;
         const yearly = monthly * 12;
@@ -950,12 +983,16 @@
         el.addEventListener('change', e => {
           const idx = Number(e.target.dataset.idx);
           const field = e.target.dataset.field;
-          if (field === 'amount') state.iym.costItems[idx].amount = fromDisplay(parseNum(e.target.value));
-          else state.iym.costItems[idx][field] = e.target.value;
+          if (field === 'amount') items[idx].amount = fromDisplay(parseNum(e.target.value));
+          else items[idx][field] = e.target.value;
           saveDraft();
         });
       });
+      return weeklyTotal;
+    }
 
+    function renderCostItems() {
+      const weeklyTotal = renderItemsTable('iym-cost-table', state.iym.costItems);
       const monthlyTotal = weeklyTotal * WEEKS_PER_MONTH;
       const yearlyTotal = weeklyTotal * WEEKS_PER_YEAR;
       document.getElementById('iym-weekly-total').textContent = fmt(weeklyTotal);
@@ -964,7 +1001,15 @@
       return weeklyTotal;
     }
 
+    function renderBusinessTools() {
+      const weeklyTotal = renderItemsTable('iym-tools-table', state.iym.businessCostItems);
+      const monthlyTotal = weeklyTotal * WEEKS_PER_MONTH;
+      document.getElementById('iym-tools-total').textContent = 'Aylık toplam: ' + fmt(monthlyTotal);
+      return weeklyTotal;
+    }
+
     function renderBusiness(weeklyTotal) {
+      const toolsWeeklyTotal = renderBusinessTools();
       const fg = document.getElementById('iym-business-fields');
       fg.innerHTML = '';
       const b = state.iym.business;
@@ -987,7 +1032,8 @@
 
       const requiredProfit = (weeklyTotal / (1 - b.investmentRate))
         / (1 - (b.taxRate + b.paymentProcessorRate + b.platformCommissionRate))
-        + (b.platformRent / WEEKS_PER_MONTH);
+        + (b.platformRent / WEEKS_PER_MONTH)
+        + toolsWeeklyTotal;
       const requiredRevenue = b.profitMargin > 0 ? requiredProfit / b.profitMargin : 0;
       const requiredSales = b.productPrice > 0 ? requiredRevenue / b.productPrice : 0;
       const requiredLeads = b.salesConversionRate > 0 ? requiredSales / b.salesConversionRate : 0;

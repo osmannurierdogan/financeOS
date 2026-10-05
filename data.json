@@ -134,6 +134,13 @@
         { "name": "Ekip", "amount": 0, "period": "Ay", "description": "" },
         { "name": "Diğer", "amount": 0, "period": "Ay", "description": "" }
       ],
+      "businessCostItems": [
+        { "name": "Higgsfield", "amount": 0, "period": "Ay", "description": "" },
+        { "name": "Claude", "amount": 0, "period": "Ay", "description": "" },
+        { "name": "Shopify Appleri", "amount": 0, "period": "Ay", "description": "Hangi uygulamalar dahil olduğunu belirtip güncelleyin" },
+        { "name": "Canva", "amount": 0, "period": "Ay", "description": "" },
+        { "name": "CapCut", "amount": 0, "period": "Ay", "description": "" }
+      ],
       "business": {
         "investmentRate": 0.2,
         "platformRent": 54,
